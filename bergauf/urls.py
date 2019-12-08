@@ -20,5 +20,6 @@ from autoxl import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('go/', views.go, name='go')
+    path('go/', views.go, name='go'),
+    path('notice/', views.notice, name='notice')
 ]

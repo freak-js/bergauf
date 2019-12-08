@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Система автоматизации</title>
+    {% load static %}
+    <link rel="stylesheet" href="/static/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
+</head>
+<body class="flex-center-column" style="background-image: url({% static 'autoxl/grid.png' %});">
+
+    <h1>{{ context }}</h1>
+
+    {% if errors %}
+
+        <div class="flex-center-column">
+
+            {% for error in errors %}
+
+                <div class="errors-block">
+
+                    <div class="errors-content">
+
+                        Строка: {{error.0}}
+
+                    </div>
+
+                    <div class="errors-content">
+                        
+                        {% if error.1 is None %}
+
+                            пусто
+
+                        {% else %}
+
+                            {{error.1}}
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="errors-content">
+
+                        {{error.2}}
+
+                    </div>
+
+                    <div class="errors-content">
+
+                        {{error.3}}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+</body>
+</html>

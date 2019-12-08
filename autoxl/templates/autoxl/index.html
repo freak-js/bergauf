@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Система автоматизации</title>
+    {% load static %}
     <link rel="stylesheet" href="/static/stylesheet.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
 </head>
-<body class="flex-center-column" style="background-image: url(static/grid.png);">
+<body class="flex-center-column" style="background-image: url({% static 'autoxl/grid.png' %});">
 
     <div class="wrap flex-center-column">
 
@@ -14,7 +15,7 @@
 
         <span class="text">автоматизации отчетности</span>
 
-        <form action="/go/" method="post" id="file-form">
+        <form action="/go/" method="post" id="file-form" enctype="multipart/form-data">
 
             {% csrf_token %}
 

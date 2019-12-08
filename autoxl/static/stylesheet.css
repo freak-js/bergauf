@@ -57,6 +57,17 @@ input:focus{
     margin-top: 35px;
 }
 
+.errors-block{
+    display: flex;
+    width: 100%;
+}
+
+.errors-content{
+    padding: 10px;
+    font-size: 30px;
+    border: 2px solid;
+}
+
 /* BUTTON */
 
 .button{
