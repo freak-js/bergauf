@@ -135,7 +135,6 @@ def get_work_sheet(request):
         return False
     return work_sheet
 
-
 def get_product_mass(string):
     mass = str()
 
@@ -148,7 +147,6 @@ def get_product_mass(string):
             if mass in CONST_PRODUCT_MASS:
                 return int(mass)
     return False
-
 
 def validate_phone_number(phone_number):  # TODO Доделать нормально
     if len(str(phone_number)) > 8:
