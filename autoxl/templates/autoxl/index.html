@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Система автоматизации</title>
+    <link rel="stylesheet" href="/static/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
+</head>
+<body style="background-image: url(static/grid4.png);">
+
+    <img src="/static/logo.png">
+
+    <span class="text">автоматизации отчетности</span>
+
+    <form action="/go/" method="post">
+
+        {% csrf_token %}
+
+        <div class="container">
+
+            <input type="file" name="file" id="file-4" class="inputfile inputfile-3">
+            
+            <label for="file-4"><span>Загрузить файл&hellip;</span></label>
+
+            <label>Введите значение для вычислений</label>
+
+            <input class="inputnumber" type="number" name="number" placeholder="Введите значение">
+
+            <button class="button" type="submit">Отправить</button>
+
+        </div>
+
+    </form>
+
+    <script src="static/custom-file-input.js"></script>
+
+</body>
+</html>
