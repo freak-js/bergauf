@@ -6,31 +6,39 @@
     <link rel="stylesheet" href="/static/stylesheet.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
 </head>
-<body style="background-image: url(static/grid4.png);">
+<body class="flex-center-column" style="background-image: url(static/grid.png);">
 
-    <img src="/static/logo.png">
+    <div class="wrap flex-center-column">
 
-    <span class="text">автоматизации отчетности</span>
+        <img src="/static/logo.png">
 
-    <form action="/go/" method="post">
+        <span class="text">автоматизации отчетности</span>
 
-        {% csrf_token %}
+        <form action="/go/" method="post" id="file-form">
 
-        <div class="container">
+            {% csrf_token %}
 
-            <input type="file" name="file" id="file-4" class="inputfile inputfile-3">
-            
-            <label for="file-4"><span>Загрузить файл&hellip;</span></label>
+            <div class="container flex-center-column">
 
-            <label>Введите значение для вычислений</label>
+                <input type="file" name="file" id="file-4" class="inputfile inputfile-3" required>
+                
+                <label for="file-4"><span>Загрузить файл&hellip;</span></label>
 
-            <input class="inputnumber" type="number" name="number" placeholder="Введите значение">
+                <label>Введите значение для вычислений</label>
 
-            <button class="button" type="submit">Отправить</button>
+                <input class="inputnumber" type="number" min="1" name="number" placeholder="Введите значение" required autofocus>
 
-        </div>
+            </div>
 
-    </form>
+        </form>
+
+    </div>
+
+    <div class="flex-center-column">
+
+        <button class="button" type="submit" form="file-form">Отправить</button>
+
+    </div>
 
     <script src="static/custom-file-input.js"></script>
 
