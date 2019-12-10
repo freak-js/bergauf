@@ -1,10 +1,9 @@
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 
-
 # Constants:
 
-CONST_PRODUCT_MASS = ['30', '25', '20', '18', '14', '10', '7', '5', '2']
+PRODUCT_MASS = ['30', '25', '20', '18', '14', '10', '7', '5', '2']
 
 PNE = 'Ошибка валидации телефонного номера'
 
@@ -18,6 +17,7 @@ PTE = 'Ошибка в значении тоннажа'
 
 PQE = 'Ошибка деления тоннажа на массу продукта, получается не целое число'
 
+
 # File generators:
 
 def generate_report(work_sheet, bonus_count):
@@ -29,7 +29,6 @@ def generate_report(work_sheet, bonus_count):
     report_work_sheet = report.active
 
     while True:
-        print(errors_list)
         cell_A = work_sheet[f'A{iteration}'].value
         cell_B = work_sheet[f'B{iteration}'].value
         cell_C = work_sheet[f'C{iteration}'].value
@@ -41,7 +40,11 @@ def generate_report(work_sheet, bonus_count):
                 new_phone_number = False
                 continue
             else:
-                errors_list.append((cell_A.row, cell_A, cell_A.coordinate, PNE))
+                errors_list.append((
+                    work_sheet[f'A{iteration}'].row,
+                    cell_A,
+                    work_sheet[f'A{iteration}'].coordinate,
+                    PNE))
                 iteration += 1
                 continue
 
@@ -93,7 +96,7 @@ def generate_report(work_sheet, bonus_count):
             iteration += 1
             continue
 
-        product_count = int(kilograms_from_tons / product_mass)
+        product_count = kilograms_from_tons / product_mass
 
         if product_count - int(product_count):
             errors_list.append((
@@ -116,24 +119,27 @@ def generate_report(work_sheet, bonus_count):
 
     return report if not errors_list else errors_list
 
+
 # Supporting:
 
-def get_kilograms_from_tons(string):
+def get_kilograms_from_tons(tons):
     try:
-        result = float(string) * 1000
+        kilograms = float(tons) * 1000
     except ValueError:
         return False
-    return result
+    return kilograms
+
 
 def get_work_sheet(request):
     try:
-        file = request.FILES.get('file')
-        work_book = openpyxl.load_workbook(file)
+        excel_file = request.FILES.get('file')
+        work_book = openpyxl.load_workbook(excel_file)
         first_sheet = work_book.get_sheet_names()[0]
         work_sheet = work_book.get_sheet_by_name(first_sheet)
     except Exception:
         return False
     return work_sheet
+
 
 def get_product_mass(string):
     mass = str()
@@ -142,11 +148,12 @@ def get_product_mass(string):
         if symbol.isdigit():
             mass += symbol
         if mass and not symbol.isdigit():
-            if mass not in CONST_PRODUCT_MASS:
+            if mass not in PRODUCT_MASS:
                 mass = ''
-            if mass in CONST_PRODUCT_MASS:
+            if mass in PRODUCT_MASS:
                 return int(mass)
     return False
+
 
 def validate_phone_number(phone_number):  # TODO Доделать нормально
     if len(str(phone_number)) > 8:

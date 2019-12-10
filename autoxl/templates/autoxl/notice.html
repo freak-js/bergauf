@@ -13,7 +13,47 @@
 
     {% if errors %}
 
-        <div class="flex-center-column">
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <td>№ строки</td>
+                    <td>Содержание ячейки</td>
+                    <td>Координата ячейки</td>
+                    <td>Пояснение ошибки</td>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for error in errors %}
+
+                    <tr>
+
+                        <td>{{error.0}}</td>
+                        <td>
+                            {% if error.1 is None %}
+                                пустая ячейка
+                            {% else %}
+                                {{error.1}}
+                            {% endif %}
+                        </td>
+                        <td>{{error.2}}</td>
+                        <td>{{error.3}}</td>
+
+                    </tr>
+
+                {% endfor %}
+    
+            </tbody>
+
+        </table>
+
+        <!-- <div class="flex-center-column">
 
             {% for error in errors %}
 
@@ -55,7 +95,7 @@
 
             {% endfor %}
 
-        </div>
+        </div> -->
 
     {% endif %}
 

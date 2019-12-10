@@ -39,6 +39,33 @@ input:focus{
     outline: none;
 }
 
+table {
+    width: 90%; 
+    border-collapse: collapse; 
+    text-align: center; 
+    color: #000000b0;
+}
+table thead tr {
+    color: #ffffff; 
+    font-weight: bold; 
+    background: #214e6eba;
+}
+table thead tr td {
+    border: 2px solid #214e6e36;
+}
+table tbody tr td {
+    border: 2px solid #5a789159;
+}
+table tbody tr{
+    background: #ffffff;
+}
+table tbody tr:nth-child(2n) {
+    background: #f4f4f4;}
+
+table tbody tr:hover {
+    background: #d6eaf7;
+}
+
 /* DIV */
 
 .flex-center-column{
