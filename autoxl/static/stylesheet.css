@@ -16,6 +16,10 @@ button:focus{
     outline: 0;
 }
 
+select:focus{
+    outline: none;
+}
+
 h1{
     padding: 0;
     margin: 0;
@@ -66,8 +70,6 @@ table tbody tr:hover {
     background: #d6eaf7;
 }
 
-/* DIV */
-
 .flex-center-column{
     display: flex;
     justify-content: center;
@@ -75,13 +77,34 @@ table tbody tr:hover {
     flex-direction: column;
 }
 
+.flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.m-10{
+    margin: 10px;
+}
+
+.m-5{
+    margin: 5px;
+}
+
+.mb-10{
+    margin-bottom: 10px;
+}
+
+/* DIV */
+
 .wrap{
     flex-grow: 1;
 }
 
 .container{
     width: 350px;
-    margin-top: 35px;
+    margin-top: 25px;
+    margin-right: 145px;
 }
 
 .errors-block{
@@ -93,6 +116,12 @@ table tbody tr:hover {
     padding: 10px;
     font-size: 30px;
     border: 2px solid;
+}
+
+.label-box{
+    width: 190px;
+    text-align: right;
+    padding-right: 15px;
 }
 
 /* BUTTON */
@@ -143,14 +172,44 @@ table tbody tr:hover {
 }
 
 .inputnumber{
-    width: 250px;
-    height: 30px;
     border: 2px solid #214E6E;
-    border-radius: 15px;
-    text-align: center;
+    border-radius: 10px;
     font-family: 'Roboto Condensed', sans-serif;
     color: #214E6E;
-    font-size: 23px;
+    font-size: 17px;
+    width: 216px;
+    height: 30px;
+    text-align: center;
+}
+
+.selectbox{
+    background: white;
+    width: 220px;
+    height: 35px;
+    font-size: 17px;
+    color: #214e6e;
+    font-family: 'Roboto Condensed', sans-serif;
+    border: 2px solid #214E6E;
+    border-radius: 10px;
+}
+
+.search-machine{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    list-style-type: none;
+}
+
+.search-machine li{
+    width: 215px;
+    text-align: center;
+    padding: 2px 0;
+    border-radius: 5px;
+}
+
+.search-machine li:hover{
+    background: #438fc524;
+    cursor: pointer;
 }
 
 /* TEXT */
@@ -159,4 +218,8 @@ table tbody tr:hover {
     font-size: 20px;
     margin-top: 8px;
     letter-spacing: 2px;
+}
+
+.label{
+    font-size: 18px;
 }

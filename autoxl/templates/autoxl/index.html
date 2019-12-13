@@ -11,9 +11,9 @@
 
     <div class="wrap flex-center-column">
 
-        <img src="/static/logo.png">
+        <img src="/static/logo.png" width="230">
 
-        <span class="text">автоматизации отчетности</span>
+        <span class="text">автоматизация отчетности</span>
 
         <form action="/go/" method="post" id="file-form" enctype="multipart/form-data">
 
@@ -21,13 +21,155 @@
 
             <div class="container flex-center-column">
 
-                <input type="file" name="file" id="file-4" class="inputfile inputfile-3" required>
-                
-                <label for="file-4"><span>Загрузить файл&hellip;</span></label>
+                <div class="flex-center mb-10">
 
-                <label>Введите значение для вычислений</label>
+                    <div class="label-box">
 
-                <input class="inputnumber" type="number" min="1" name="number" placeholder="Введите значение" required autofocus>
+                        <span class="label">Формат отчета:</span>
+
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="">
+
+                            <option value="">Отчет кабинета 007</option>
+                            <option value="">Отчет с менеджерами</option>
+                            <option value="">Отчет без менеджеров</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Продажи, единицы:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="">
+
+                            <option value="">Тонны</option>
+                            <option value="">Мешки</option>
+
+                        </select>
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Тип бонуса:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="" onchange="CheckSelectBox()" id="selectbox">
+
+                            <option value="">Бонус за мешок</option>
+                            <option value="">Фиксированный бонус</option>
+
+                        </select>
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10" id="div_selectbox" style="display: none;">
+
+                    <div class="label-box">
+
+                        <span class="label">Фиксированный бонус с:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="">
+
+                            <option value="">Паллеты</option>
+                            <option value="">Мешка</option>
+                            <option value="">Тонны</option>
+
+                        </select>
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10" id="div_input" style="display: none;">
+
+                    <div class="label-box">
+
+                        <span class="label">Количество паллет:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение">
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10" id="div_checkbox" style="display: none;">
+
+                    <div class="label-box"></div>
+
+                    <div class="select-container">
+
+                        <span class="label">Акция кратная</span>
+
+                        <input type="checkbox">
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Размер бонуса:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение">
+
+                    </div>  
+
+                </div>
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Дистрибьютор:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <input class="inputnumber" type="text" placeholder="Поиск дистрибьютора..." id="text_input">
+
+                        <ul class="search-machine" id="ul"></ul>
+
+                    </div>  
+    
+                </div>
 
             </div>
 
@@ -42,6 +184,67 @@
     </div>
 
     <script src="static/custom-file-input.js"></script>
+
+    <script>
+
+        const list = [
+                    'Astana Construction Materials, ТОО, Астана', 
+                    'СКС Строительный Торговый Дом ООО, Санкт-Петербург', 
+                    'Петрович Строительный Торговый Дом ООО, Санкт-Петербург', 
+                    'BUILD-SERVISE TOO, РК, Павлодар', 
+                    'GAUF GROUP ТОО', 
+                    'АБСК-Изоляционные системы ООО, Екатеринбург', 
+                    'АКВАДЕКОР ООО Барнаул', 
+                    'АЛЬФАКОМПАНИ ООО Н Новгород', 
+                    'АльфаСтрой ООО,Самара (контрагент)', 
+                    'Альянс ООО, Иркутск', 
+                    'АЛЬЯНС-СТРОЙ ООО (07.2017 Мурманск)'
+                    ];
+        const text_input = document.getElementById('text_input');
+        const ul = document.getElementById('ul');
+
+        text_input.oninput = function () {
+
+            let value = text_input.value;
+            
+            if(value != ''){
+                ul.innerHTML = list.filter((x)=> 
+                x.includes(value)).slice(0, 3).map((x)=> 
+                `<li onclick="SetValue(this)" data-value='${x}'">${x}</li>`).join('');
+            } else {
+                ul.innerHTML = '';
+            }
+        };
+
+        function SetValue(object){
+            text_input.value = object.dataset.value;
+            ul.innerHTML = '';
+        }
+    
+        function CheckSelectBox(){
+
+            let selectbox = document.getElementById('selectbox');
+            let div_selectbox = document.getElementById('div_selectbox');
+            let div_input = document.getElementById('div_input');
+            let div_checkbox = document.getElementById('div_checkbox');
+
+            if (selectbox.options.selectedIndex == 1){
+
+                div_selectbox.style.display = '';
+                div_input.style.display = '';
+                div_checkbox.style.display = '';
+
+            } else {
+
+                div_selectbox.style.display = 'none';
+                div_input.style.display = 'none';
+                div_checkbox.style.display = 'none';
+
+            }
+
+        }
+    
+    </script>
 
 </body>
 </html>
