@@ -10,6 +10,8 @@ body{
     font-family: 'Roboto Condensed', sans-serif;
     height: 100%;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 button:focus{
@@ -108,7 +110,7 @@ table tbody tr:hover {
 .container{
     width: 350px;
     margin-top: 25px;
-    margin-right: 145px;
+    margin-right: 225px;
 }
 
 .errors-block{
@@ -123,9 +125,19 @@ table tbody tr:hover {
 }
 
 .label-box{
-    width: 190px;
+    width: 270px;
     text-align: right;
     padding-right: 15px;
+}
+
+.select-container{
+    width: 220px;
+}
+
+.checkbox-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* BUTTON */
@@ -153,6 +165,10 @@ table tbody tr:hover {
 }
 
 /* INPUT */
+
+.checkbox{
+    margin: 3px 0 0 10px;
+}
 
 .inputfile {
     width: 0.1px;

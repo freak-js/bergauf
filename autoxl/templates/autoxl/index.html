@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/static/stylesheet.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
 </head>
-<body class="flex-center-column" style="background-image: url({% static 'autoxl/grid.png' %});">
+<body  style="background-image: url({% static 'autoxl/grid.png' %});">
 
     <div class="wrap flex-center-column">
 
@@ -91,7 +91,7 @@
 
                 </div>
 
-                <!-- ВЫБОР БОНУСА С ЕДИНИЦЫ ВЕСА SELECTBOX -->
+                <!-- ВЫБОР БОНУСА С ЕДИНИЦЫ ВЕСА SELECTBOX (СКРЫВАЕТСЯ) -->
 
                 <div class="flex-center mb-10 animate-height-no" id="div_selectbox">
 
@@ -119,7 +119,7 @@
 
                 </div>
 
-                <!-- КОЛИЧЕСТВО ПРОДУКТА INPUT NUMBER -->
+                <!-- КОЛИЧЕСТВО ПРОДУКТА INPUT NUMBER (СКРЫВАЕТСЯ) -->
 
                 <div class="flex-center mb-10 animate-height-no" id="div_input">
 
@@ -141,7 +141,7 @@
 
                 </div>
 
-                <!-- КРАТНОСТЬ АКЦИИ ЧЕКБОКС CHECKBOX -->
+                <!-- КРАТНОСТЬ АКЦИИ ЧЕКБОКС CHECKBOX (СКРЫВАЕТСЯ) -->
 
                 <div class="flex-center mb-10 animate-height-no" id="div_checkbox">
 
@@ -149,11 +149,11 @@
 
                         <div class="label-box"></div>
 
-                        <div class="select-container">
+                        <div class="select-container checkbox-container">
 
                             <span class="label">Акция кратная</span>
 
-                            <input disabled type="checkbox" id="input_checkbox_disabled">
+                            <input class="checkbox" disabled type="checkbox" id="input_checkbox_disabled">
 
                         </div>  
 
@@ -173,9 +173,125 @@
 
                     <div class="select-container">
 
-                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение">
+                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off">
 
                     </div>  
+
+                </div>
+
+                <!-- СПОСОБ КОМПЕНСАЦИИ SELECTBOX-->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Способ компенсации:</span>
+
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="" onchange="CheckSelectBoxCompensation()" id="selectbox_compensation">
+
+                            <option value="">Кабинет 007</option>
+                            <option value="">Карты</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- НАЗВАНИЕ АКЦИИ INPUT TEXT (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_text">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_text">
+
+                        <div class="label-box">
+
+                            <span class="label">Название акции:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input disabled class="inputnumber" type="text" placeholder="Введите название" id="card_text" autocomplete="off">
+
+                        </div>  
+
+                    </div>
+    
+                </div>
+
+                <!-- НОМЕР МАРКЕТИНГОВОЙ АКТИВНОСТИ INPUT NUMBER (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_number">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_number">
+
+                        <div class="label-box">
+
+                            <span class="label">Номер маркетинговой активности:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="card_number" autocomplete="off">
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- СТАТЬЯ ЗАТРАТ SELECTBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_selectbox">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_selectbox">
+
+                        <div class="label-box">
+
+                            <span class="label">Статья затрат:</span>
+
+                        </div>
+
+                        <div class="select-container">
+
+                            <select disabled class="selectbox" name="" id="card_selectbox">
+
+                                <option value="">МБ</option>
+                                <option value="">ЛИ</option>
+                                <option value="">DIY</option>
+                                <option value="">ФИ</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ВЫБОР ФИРМЫ ОТПРАВКИ КАРТ CHECKBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_checkbox">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_checkbox">
+
+                        <div class="label-box"></div>
+
+                        <div class="select-container checkbox-container">
+
+                            <span class="label">На сотрудника</span>
+
+                            <input class="checkbox" disabled type="checkbox" id="card_checkbox">
+
+                        </div>  
+
+                    </div>
 
                 </div>
 
@@ -191,35 +307,12 @@
 
                     <div class="select-container">
 
-                        <input class="inputnumber" type="text" placeholder="Поиск дистрибьютора..." id="text_input">
+                        <input class="inputnumber" type="text" placeholder="Поиск дистрибьютора" id="text_input" autocomplete="off">
 
                         <ul class="search-machine" id="ul"></ul>
 
                     </div>  
     
-                </div>
-
-                <!-- СПОСОБ КОМПЕНСАЦИИ SELECTBOX-->
-
-                <div class="flex-center mb-10">
-
-                    <div class="label-box">
-
-                        <span class="label">Способ компенсации:</span>
-
-                    </div>
-
-                    <div class="select-container">
-
-                        <select class="selectbox" name="">
-
-                            <option value="">Кабинет 007</option>
-                            <option value="">Карты</option>
-
-                        </select>
-
-                    </div>
-
                 </div>
 
                 <!-- КОНЕЦ -->
@@ -272,6 +365,71 @@
         function SetValue(object){
             text_input.value = object.dataset.value;
             ul.innerHTML = '';
+        }
+
+        function CheckSelectBoxCompensation(){
+
+            // selectbox - для получения значения выбранного пункта option
+
+           let selectbox_compensation = document.getElementById('selectbox_compensation');
+
+            // Элементы для управления высотой 
+
+            let card_div_text = document.getElementById('card_div_text');
+            let card_div_number = document.getElementById('card_div_number');
+            let card_div_selectbox = document.getElementById('card_div_selectbox');
+            let card_div_checkbox = document.getElementById('card_div_checkbox');
+
+            // Элементы для управления прозрачностью
+
+            let card_opacity_text = document.getElementById('card_opacity_text');
+            let card_opacity_number = document.getElementById('card_opacity_number');
+            let card_opacity_selectbox = document.getElementById('card_opacity_selectbox');
+            let card_opacity_checkbox = document.getElementById('card_opacity_checkbox');
+
+            // Элементы для блокирования доступа в скрытом состоянии
+
+            let card_text = document.getElementById('card_text');
+            let card_number = document.getElementById('card_number');
+            let card_selectbox = document.getElementById('card_selectbox');
+            let card_checkbox = document.getElementById('card_checkbox');
+
+            if (selectbox_compensation.options.selectedIndex == 1){
+
+                card_div_text.classList.add('animate-height');
+                card_div_number.classList.add('animate-height');
+                card_div_selectbox.classList.add('animate-height');
+                card_div_checkbox.classList.add('animate-height');
+
+                card_opacity_text.classList.add('animate-opacity');
+                card_opacity_number.classList.add('animate-opacity');
+                card_opacity_selectbox.classList.add('animate-opacity');
+                card_opacity_checkbox.classList.add('animate-opacity');
+
+                card_text.removeAttribute('disabled');
+                card_number.removeAttribute('disabled');
+                card_selectbox.removeAttribute('disabled');
+                card_checkbox.removeAttribute('disabled');
+
+            } else {
+
+                card_div_text.classList.remove('animate-height');
+                card_div_number.classList.remove('animate-height');
+                card_div_selectbox.classList.remove('animate-height');
+                card_div_checkbox.classList.remove('animate-height');
+
+                card_opacity_text.classList.remove('animate-opacity');
+                card_opacity_number.classList.remove('animate-opacity');
+                card_opacity_selectbox.classList.remove('animate-opacity');
+                card_opacity_checkbox.classList.remove('animate-opacity');
+
+                card_text.setAttribute("disabled", "true");
+                card_number.setAttribute("disabled", "true");
+                card_selectbox.setAttribute("disabled", "true");
+                card_checkbox.setAttribute("disabled", "true");
+
+            }
+
         }
     
         function CheckSelectBox(){
