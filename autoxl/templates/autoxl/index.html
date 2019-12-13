@@ -21,6 +21,8 @@
 
             <div class="container flex-center-column">
 
+                <!-- ФОРМАТ ОТЧЕТА SELECTBOX -->
+
                 <div class="flex-center mb-10">
 
                     <div class="label-box">
@@ -43,6 +45,8 @@
 
                 </div>
 
+                <!-- ЕДИНИЦЫ ПРОДАЖИ SELECTBOX -->
+
                 <div class="flex-center mb-10">
 
                     <div class="label-box">
@@ -63,6 +67,8 @@
                     </div>  
 
                 </div>
+
+                <!-- ТИП БОНУСА SELECTBOX -->
 
                 <div class="flex-center mb-10">
 
@@ -85,57 +91,77 @@
 
                 </div>
 
-                <div class="flex-center mb-10" id="div_selectbox" style="display: none;">
+                <!-- ВЫБОР БОНУСА С ЕДИНИЦЫ ВЕСА SELECTBOX -->
 
-                    <div class="label-box">
+                <div class="flex-center mb-10 animate-height-no" id="div_selectbox">
 
-                        <span class="label">Фиксированный бонус с:</span>
-                        
+                    <div class="flex-center animate-opacity-no" id="div_opacity_selectbox">
+
+                        <div class="label-box">
+
+                            <span class="label">Фиксированный бонус с:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <select disabled class="selectbox" name="" id="input_selectbox_disabled">
+
+                                <option value="">Паллеты</option>
+                                <option value="">Мешка</option>
+                                <option value="">Тонны</option>
+
+                            </select>
+
+                        </div>  
+
                     </div>
 
-                    <div class="select-container">
-
-                        <select class="selectbox" name="">
-
-                            <option value="">Паллеты</option>
-                            <option value="">Мешка</option>
-                            <option value="">Тонны</option>
-
-                        </select>
-
-                    </div>  
-
                 </div>
 
-                <div class="flex-center mb-10" id="div_input" style="display: none;">
+                <!-- КОЛИЧЕСТВО ПРОДУКТА INPUT NUMBER -->
 
-                    <div class="label-box">
+                <div class="flex-center mb-10 animate-height-no" id="div_input">
 
-                        <span class="label">Количество паллет:</span>
-                        
+                    <div class="flex-center animate-opacity-no" id="div_opacity_number">
+
+                        <div class="label-box">
+
+                            <span class="label">Количество:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="input_number_disabled">
+
+                        </div>  
+
                     </div>
 
-                    <div class="select-container">
+                </div>
 
-                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение">
+                <!-- КРАТНОСТЬ АКЦИИ ЧЕКБОКС CHECKBOX -->
 
-                    </div>  
+                <div class="flex-center mb-10 animate-height-no" id="div_checkbox">
+
+                    <div class="flex-center animate-opacity-no" id="div_opacity_checkbox">
+
+                        <div class="label-box"></div>
+
+                        <div class="select-container">
+
+                            <span class="label">Акция кратная</span>
+
+                            <input disabled type="checkbox" id="input_checkbox_disabled">
+
+                        </div>  
+
+                    </div>
 
                 </div>
 
-                <div class="flex-center mb-10" id="div_checkbox" style="display: none;">
-
-                    <div class="label-box"></div>
-
-                    <div class="select-container">
-
-                        <span class="label">Акция кратная</span>
-
-                        <input type="checkbox">
-
-                    </div>  
-
-                </div>
+                <!-- РАЗМЕР БОНУСА INPUT NUMBER -->
 
                 <div class="flex-center mb-10">
 
@@ -152,6 +178,8 @@
                     </div>  
 
                 </div>
+
+                <!-- ДИСТРИБЬЮТОР INPUT TEXT-->
 
                 <div class="flex-center mb-10">
 
@@ -170,6 +198,31 @@
                     </div>  
     
                 </div>
+
+                <!-- СПОСОБ КОМПЕНСАЦИИ SELECTBOX-->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Способ компенсации:</span>
+
+                    </div>
+
+                    <div class="select-container">
+
+                        <select class="selectbox" name="">
+
+                            <option value="">Кабинет 007</option>
+                            <option value="">Карты</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- КОНЕЦ -->
 
             </div>
 
@@ -223,22 +276,55 @@
     
         function CheckSelectBox(){
 
+            // selectbox - для получения значения выбранного пункта option
+
             let selectbox = document.getElementById('selectbox');
+
+            // Элементы для управления высотой 
+
             let div_selectbox = document.getElementById('div_selectbox');
             let div_input = document.getElementById('div_input');
             let div_checkbox = document.getElementById('div_checkbox');
 
+            // Элементы для управления прозрачностью
+
+            let div_opacity_checkbox = document.getElementById('div_opacity_checkbox');
+            let div_opacity_number = document.getElementById('div_opacity_number');
+            let div_opacity_selectbox = document.getElementById('div_opacity_selectbox');
+
+            // Элементы для блокирования доступа в скрытом состоянии
+
+            let input_checkbox_disabled = document.getElementById('input_checkbox_disabled');
+            let input_number_disabled = document.getElementById('input_number_disabled');
+            let input_selectbox_disabled = document.getElementById('input_selectbox_disabled')
+
             if (selectbox.options.selectedIndex == 1){
 
-                div_selectbox.style.display = '';
-                div_input.style.display = '';
-                div_checkbox.style.display = '';
+                div_opacity_checkbox.classList.add('animate-opacity');
+                div_opacity_number.classList.add('animate-opacity');
+                div_opacity_selectbox.classList.add('animate-opacity');
+
+                div_selectbox.classList.add('animate-height');
+                div_input.classList.add('animate-height');
+                div_checkbox.classList.add('animate-height');
+
+                input_checkbox_disabled.removeAttribute('disabled');
+                input_number_disabled.removeAttribute('disabled');
+                input_selectbox_disabled.removeAttribute('disabled');
 
             } else {
 
-                div_selectbox.style.display = 'none';
-                div_input.style.display = 'none';
-                div_checkbox.style.display = 'none';
+                div_opacity_checkbox.classList.remove('animate-opacity');
+                div_opacity_number.classList.remove('animate-opacity');
+                div_opacity_selectbox.classList.remove('animate-opacity');
+
+                div_selectbox.classList.remove('animate-height');
+                div_input.classList.remove('animate-height');
+                div_checkbox.classList.remove('animate-height');
+
+                input_checkbox_disabled.setAttribute("disabled", "true");
+                input_number_disabled.setAttribute("disabled", "true");
+                input_selectbox_disabled.setAttribute("disabled", "true");
 
             }
 

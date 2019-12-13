@@ -25,6 +25,10 @@ h1{
     margin: 0;
 }
 
+span{
+    user-select: none;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -222,4 +226,26 @@ table tbody tr:hover {
 
 .label{
     font-size: 18px;
+}
+
+/* ANIMATION */
+
+.animate-height-no{
+    height: 0px;
+    transition: 600ms;
+}
+
+.animate-height{
+    height: 35px;
+    transition: 600ms;
+}
+
+.animate-opacity-no{
+    opacity: 0;
+    transition: ease-out 200ms;
+}
+
+.animate-opacity{
+    opacity: 1;
+    transition: ease-in 700ms;
 }
