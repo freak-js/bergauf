@@ -2,10 +2,22 @@ from django.shortcuts import render, redirect
 from .utils import get_work_sheet, generate_report
 from django.http import HttpResponse
 from openpyxl.writer.excel import save_virtual_workbook
+from django.views.decorators.http import require_POST
+from .models import Distributor
 
 
 def index(request):
     return render(request, 'autoxl/index.html')
+
+
+def distributor(request):
+    return render(request, 'autoxl/distributor.html')
+
+
+@require_POST
+def save_distributor(request):
+    distributor = Distributor.save_distributor(request)
+    return redirect('distributors') if distributor else redirect('notice', {'context': 'Произошла ошибка'})
 
 
 def go(request):
@@ -20,7 +32,8 @@ def go(request):
 
         response = HttpResponse(
             save_virtual_workbook(report),
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
         response['Content-Disposition'] = 'attachment; filename=report.xlsx'
         return response
     return render(request, 'autoxl/notice.html', {'context': 'Произошла ошибка'})

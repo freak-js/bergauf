@@ -7,97 +7,57 @@
     <link rel="stylesheet" href="/static/stylesheet.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
 </head>
-<body class="flex-center-column" style="background-image: url({% static 'autoxl/grid.png' %});">
+<body style="background-image: url({% static 'autoxl/grid.png' %});">
 
-    <h1>{{ context }}</h1>
+    <div class="wrap flex-center-column">
 
-    {% if errors %}
+        <h1>{{ context }}</h1>
 
-        <table>
+        {% if errors %}
 
-            <thead>
+            <table>
 
-                <tr>
-
-                    <td>№ строки</td>
-                    <td>Содержание ячейки</td>
-                    <td>Координата ячейки</td>
-                    <td>Пояснение ошибки</td>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for error in errors %}
+                <thead>
 
                     <tr>
 
-                        <td>{{error.0}}</td>
-                        <td>
-                            {% if error.1 is None %}
-                                пустая ячейка
-                            {% else %}
-                                {{error.1}}
-                            {% endif %}
-                        </td>
-                        <td>{{error.2}}</td>
-                        <td>{{error.3}}</td>
+                        <td>№ строки</td>
+                        <td>Содержание ячейки</td>
+                        <td>Координата ячейки</td>
+                        <td>Пояснение ошибки</td>
 
                     </tr>
 
-                {% endfor %}
-    
-            </tbody>
+                </thead>
 
-        </table>
+                <tbody>
 
-        <!-- <div class="flex-center-column">
+                    {% for error in errors %}
 
-            {% for error in errors %}
+                        <tr>
 
-                <div class="errors-block">
+                            <td>{{error.0}}</td>
+                            <td>
+                                {% if error.1 is None %}
+                                    пустая ячейка
+                                {% else %}
+                                    {{error.1}}
+                                {% endif %}
+                            </td>
+                            <td>{{error.2}}</td>
+                            <td>{{error.3}}</td>
 
-                    <div class="errors-content">
+                        </tr>
 
-                        Строка: {{error.0}}
+                    {% endfor %}
+        
+                </tbody>
 
-                    </div>
+            </table>
 
-                    <div class="errors-content">
-                        
-                        {% if error.1 is None %}
+        {% endif %}
 
-                            пусто
-
-                        {% else %}
-
-                            {{error.1}}
-
-                        {% endif %}
-
-                    </div>
-
-                    <div class="errors-content">
-
-                        {{error.2}}
-
-                    </div>
-
-                    <div class="errors-content">
-
-                        {{error.3}}
-
-                    </div>
-
-                </div>
-
-            {% endfor %}
-
-        </div> -->
-
-    {% endif %}
+    </div>
 
 </body>
 </html>

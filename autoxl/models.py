@@ -19,3 +19,15 @@ class Distributor(models.Model):
         self.active = False
 
 
+    @staticmethod
+    def save_distributor(request):
+        distributor = Distributor(
+            name=request.POST.get('name'),
+            recipient_first_name=request.POST.get('first_name'),
+            recipient_last_name=request.POST.get('last_name'),
+            recipient_patronymic=request.POST.get('patronymic'),
+            shipping_address=request.POST.get('address'),
+            telephone_number=request.POST.get('telephone_number'),
+        )
+        distributor.save()
+        return distributor
