@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page
-from .error_template_message import UNIQUE_ID_ERROR
+from .error_template_message import UNIQUE_ID_ERROR, CHANGE_DISTRIBUTOR_ID_ERROR
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
 # from openpyxl.writer.excel import save_virtual_workbook
@@ -13,12 +13,16 @@ def index(request):
     return render(request, 'autoxl/index.html')
 
 
+def notice(request):
+    return render(request, 'autoxl/notice.html')
+
+
 def distributor(request):
     return render(request, 'autoxl/distributor.html')
 
 
 def distributors(request):
-    distributors = Distributor.objects.all().filter(active=True)
+    distributors = Distributor.objects.all().filter(active=True).order_by('-add_date')
     return render(request, 'autoxl/distributors.html', {'distributors': distributors})
 
 
@@ -44,8 +48,16 @@ def delete_distributor(request):
     return redirect('distributors')
 
 
-def notice(request):
-    return render(request, 'autoxl/notice.html')
+@require_POST
+def change_distributor(request):
+    distributor_id = request.POST.get('change_id')
+    if distributor_id:
+        distributor = get_object_or_404(Distributor, pk=distributor_id)
+        return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
+    return redirect_to_error_page(request, f'{CHANGE_DISTRIBUTOR_ID_ERROR}')
+
+
+
 
 
 # def go(request):

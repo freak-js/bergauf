@@ -11,6 +11,7 @@ class Distributor(models.Model):
     shipping_address = models.CharField("Адрес отправки карты", max_length=150)
     telephone_number = models.CharField("Телефонный номер", max_length=25)
     external_id = models.CharField("Внешний ID из 1С", max_length=25, unique=True)
+    region = models.CharField("Аббревиатура регионов", max_length=25)
     add_date = models.DateTimeField("Дата и время добавления", auto_now_add=True)
     active = models.BooleanField("Статус удален/активен", default=True)
 
@@ -34,7 +35,8 @@ class Distributor(models.Model):
                 recipient_patronymic=request.POST['patronymic'],
                 shipping_address=request.POST['address'],
                 telephone_number=request.POST['telephone_number'],
-                external_id=request.POST['external_id']
+                external_id=request.POST['external_id'],
+                region=request.POST['region']
             )
             distributor.save()
         except IntegrityError:
