@@ -135,7 +135,7 @@ table tbody tr:hover {
 .container{
     width: 350px;
     margin-top: 25px;
-    margin-right: 225px;
+    margin-right: 275px;
 }
 
 .errors-block{
@@ -415,4 +415,45 @@ table tbody tr:hover {
     font-size: 18px;
     letter-spacing: 1px;
     border: 2px solid #517593;
+}
+
+.link-add-distributor{
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    color: #214c6e;
+    border: 2px solid #214c6e;
+    border-radius: 100%;
+    background: white;
+    margin-left: 5px;
+    transition: 500ms;
+}
+
+.link-add-distributor-icon{
+    margin-left: 8px;
+    margin-top: 8px;
+}
+
+.link-add-distributor:hover{
+    color: white;
+    background: #214c6e;
+    border: 2px solid #214c6e;
+}
+
+.link-list-distributor{
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    color: #214c6e;
+    border: 2px solid #214c6e;
+    border-radius: 100%;
+    background: white;
+    margin-left: 45px;
+    transition: 500ms;
+}
+
+.link-list-distributor:hover{
+    color: white;
+    background: #214c6e;
+    border: 2px solid #214c6e;
 }

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page
-from .error_template_message import UNIQUE_ID_ERROR, CHANGE_DISTRIBUTOR_ID_ERROR
+from .error_template_message import *
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
 # from openpyxl.writer.excel import save_virtual_workbook
@@ -10,7 +10,9 @@ from .error_template_message import UNIQUE_ID_ERROR, CHANGE_DISTRIBUTOR_ID_ERROR
 
 
 def index(request):
-    return render(request, 'autoxl/index.html')
+    distributors = Distributor.objects.all().filter(active=True)
+    distributors_names = [distributor.name for distributor in distributors]
+    return render(request, 'autoxl/index.html', {'context': distributors_names})
 
 
 def notice(request):
@@ -30,7 +32,7 @@ def distributors(request):
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
     if isinstance(distributor, str):
-        return redirect_to_error_page(request, f'{UNIQUE_ID_ERROR} {distributor}')
+        return redirect_to_error_page(request, f'{UNIQUE_EXTERNAL_ID_ERROR} {distributor}')
     if distributor:
         return redirect('distributors')
     return redirect_to_error_page(request)
@@ -39,7 +41,7 @@ def save_distributor(request):
 @require_POST
 def delete_distributor(request):
     try:
-        distributor_id = int(request.POST.get('delete_id'))
+        distributor_id = int(request.POST.get('id_delete_distributor'))
     except TypeError:
         return redirect_to_error_page(request)
 
@@ -50,12 +52,32 @@ def delete_distributor(request):
 
 @require_POST
 def change_distributor(request):
-    distributor_id = request.POST.get('change_id')
-    if distributor_id:
-        distributor = get_object_or_404(Distributor, pk=distributor_id)
-        return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
-    return redirect_to_error_page(request, f'{CHANGE_DISTRIBUTOR_ID_ERROR}')
+    print(request.POST)
+    id_editable_distributor = request.POST.get('id_editable_distributor')
+    hidden_distributor_id = request.POST.get('hidden_distributor_id')
 
+    if not any([id_editable_distributor, hidden_distributor_id]):
+        #log
+        return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_ID_ERROR)
+
+    if all([id_editable_distributor, hidden_distributor_id]):
+        #log
+        return redirect_to_error_page(request)
+
+    distributor = get_object_or_404(
+        Distributor,
+        pk=id_editable_distributor if id_editable_distributor else hidden_distributor_id
+    )
+
+    if id_editable_distributor:
+        return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
+
+    if hidden_distributor_id:
+        try:
+            distributor.change(request)
+        except Exception:
+            return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_SAVE_ERROR)
+        return redirect('distributors')
 
 
 

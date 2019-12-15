@@ -6,6 +6,7 @@
     {% load static %}
     <link rel="stylesheet" href="/static/stylesheet.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9fe4522470.js" crossorigin="anonymous"></script>
 </head>
 <body  style="background-image: url({% static 'autoxl/grid.png' %});">
 
@@ -309,6 +310,10 @@
 
                         <input class="inputnumber" type="text" placeholder="Поиск дистрибьютора" id="text_input" autocomplete="off">
 
+                        <a class="link-add-distributor" href="/distributor/" title="Добавить дистрибьютора"><i class="fas fa-user-plus link-add-distributor-icon"></i></a>
+
+                        <a class="link-list-distributor" href="/distributors/" title="Список дистрибьюторов"><i class="fas fa-list-ul link-add-distributor-icon"></i></a>
+
                         <ul class="search-machine" id="ul"></ul>
 
                     </div>  
@@ -331,9 +336,11 @@
 
     <script src="static/custom-file-input.js"></script>
 
+    {{ context|json_script:"hello-data" }}
+ 
     <script>
 
-        // const list = {{ distributors }};
+        const list = JSON.parse(document.getElementById('hello-data').textContent);
         const text_input = document.getElementById('text_input');
         const ul = document.getElementById('ul');
 

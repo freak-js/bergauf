@@ -25,8 +25,22 @@ class Distributor(models.Model):
         self.save(update_fields=['active'])
 
 
+    def change(self, request):
+        print(request.POST)
+        self.name = request.POST['name']
+        self.recipient_first_name = request.POST['first_name']
+        self.recipient_last_name = request.POST['last_name']
+        self.recipient_patronymic = request.POST['patronymic']
+        self.shipping_address = request.POST['address']
+        self.telephone_number = request.POST['telephone_number']
+        self.external_id = request.POST['external_id']
+        self.region = request.POST['region']
+        self.save()
+
+
     @staticmethod
     def save_distributor(request):
+        print(request.POST)
         try:
             distributor = Distributor(
                 name=request.POST['name'],
