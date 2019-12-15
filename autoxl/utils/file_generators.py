@@ -1,7 +1,8 @@
 import openpyxl
-from openpyxl.writer.excel import save_virtual_workbook
+
 
 # Constants:
+
 
 PRODUCT_MASS = ['30', '25', '20', '18', '14', '10', '7', '5', '2']
 
@@ -19,6 +20,7 @@ PQE = 'Ошибка деления тоннажа на массу продукт
 
 
 # File generators:
+
 
 def generate_report(work_sheet, bonus_count):
     errors_list = []
@@ -155,7 +157,5 @@ def get_product_mass(string):
     return False
 
 
-def validate_phone_number(phone_number):  # TODO Доделать нормально
-    if len(str(phone_number)) > 8:
-        return True
-    return False
+def validate_phone_number(phone_number):  # TODO
+    pass

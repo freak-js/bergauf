@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
-from .utils import get_work_sheet, generate_report
-from django.http import HttpResponse
-from openpyxl.writer.excel import save_virtual_workbook
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
+from .utils.utils import redirect_to_error_page
+# from .utils import get_work_sheet, generate_report
+# from django.http import HttpResponse
+# from openpyxl.writer.excel import save_virtual_workbook
+
 
 
 def index(request):
@@ -18,16 +20,29 @@ def distributors(request):
     distributors = Distributor.objects.all().filter(active=True)
     return render(request, 'autoxl/distributors.html', {'distributors': distributors})
 
+
 @require_POST
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
-    return redirect('distributors') if distributor else redirect('notice', {'context': 'Произошла ошибка'})
+    if distributor:
+        return redirect('distributors')
+    return redirect_to_error_page(request)
+
+
+@require_POST
+def delete_distributor(request):
+    try:
+        distributor_id = int(request.POST.get('delete_id'))
+    except TypeError:
+        return redirect_to_error_page(request)
+
+    distributor = get_object_or_404(Distributor, pk=distributor_id)
+    distributor.kill()
+    return redirect('distributors')
 
 
 def notice(request):
     return render(request, 'autoxl/notice.html')
-
-
 
 
 # def go(request):

@@ -1,4 +1,5 @@
 from django.db import models
+from typing import Union
 
 
 class Distributor(models.Model):
@@ -17,17 +18,21 @@ class Distributor(models.Model):
 
     def kill(self):
         self.active = False
+        self.save(update_fields=['active'])
 
 
     @staticmethod
     def save_distributor(request):
-        distributor = Distributor(
-            name=request.POST.get('name'),
-            recipient_first_name=request.POST.get('first_name'),
-            recipient_last_name=request.POST.get('last_name'),
-            recipient_patronymic=request.POST.get('patronymic'),
-            shipping_address=request.POST.get('address'),
-            telephone_number=request.POST.get('telephone_number'),
-        )
+        try:
+            distributor = Distributor(
+                name=request.POST['name'],
+                recipient_first_name=request.POST['first_name'],
+                recipient_last_name=request.POST['last_name'],
+                recipient_patronymic=request.POST['patronymic'],
+                shipping_address=request.POST['address'],
+                telephone_number=request.POST['telephone_number'],
+            )
+        except Exception:
+            return False
         distributor.save()
         return distributor

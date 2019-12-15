@@ -10,4 +10,5 @@ urlpatterns = [
     path('distributor/', views.distributor, name='distributor'),
     path('distributors/', views.distributors, name='distributors'),
     path('save_distributor/', views.save_distributor, name='save_distributor'),
+    path('delete_distributor/', views.delete_distributor, name='delete_distributor'),
 ]

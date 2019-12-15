@@ -58,7 +58,7 @@ table {
 table thead tr {
     color: #ffffff; 
     font-weight: bold; 
-    background: #214e6eba;
+    background: #214d6e;
 }
 table thead tr td {
     border: 2px solid #214e6e36;
@@ -201,6 +201,18 @@ table tbody tr:hover {
     letter-spacing: 2px;
     background-color: white;
     color: #214E6E;
+}
+
+.button-delete{
+    width: 35px;
+    background: none;
+    border: none;
+    color: #214d6e;
+}
+
+.button-delete:hover{
+    color: #cd4848;
+    cursor: pointer;
 }
 
 /* INPUT */
