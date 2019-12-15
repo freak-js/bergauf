@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page
+from .error_template_message import UNIQUE_ID_ERROR
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
 # from openpyxl.writer.excel import save_virtual_workbook
@@ -24,6 +25,8 @@ def distributors(request):
 @require_POST
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
+    if isinstance(distributor, str):
+        return redirect_to_error_page(request, f'{UNIQUE_ID_ERROR} {distributor}')
     if distributor:
         return redirect('distributors')
     return redirect_to_error_page(request)

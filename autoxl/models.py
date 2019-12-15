@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models, IntegrityError
+from django.shortcuts import get_object_or_404
 from typing import Union
 
 
@@ -9,6 +10,8 @@ class Distributor(models.Model):
     recipient_patronymic = models.CharField("Отчество получателя", max_length=30, blank=True)
     shipping_address = models.CharField("Адрес отправки карты", max_length=150)
     telephone_number = models.CharField("Телефонный номер", max_length=25)
+    external_id = models.CharField("Внешний ID из 1С", max_length=25, unique=True)
+    add_date = models.DateTimeField("Дата и время добавления", auto_now_add=True)
     active = models.BooleanField("Статус удален/активен", default=True)
 
 
@@ -31,8 +34,12 @@ class Distributor(models.Model):
                 recipient_patronymic=request.POST['patronymic'],
                 shipping_address=request.POST['address'],
                 telephone_number=request.POST['telephone_number'],
+                external_id=request.POST['external_id']
             )
+            distributor.save()
+        except IntegrityError:
+            distributor_from_db = get_object_or_404(Distributor, external_id=request.POST['external_id'])
+            return distributor_from_db.name
         except Exception:
             return False
-        distributor.save()
         return distributor
