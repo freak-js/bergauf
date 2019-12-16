@@ -457,3 +457,83 @@ table tbody tr:hover {
     background: #214c6e;
     border: 2px solid #214c6e;
 }
+
+/* EASTER EGG */
+
+@keyframes animUnicorn {
+    from {
+        transform: translateX(100%)
+    }
+    to {
+        transform: translateX(-600%)
+    }
+}
+
+.unicorns-party{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    height: 35px;
+    width: 180px;
+    color: white;
+    background: #ff34a8;
+    border: 2px solid #ff34a8;
+    border-radius: 15px;
+    padding: 0 25px 0 5px;
+    top: 150px;
+    right: -170px;
+    transition: 400ms;
+    opacity: 0;
+    z-index: -100;
+}
+
+.unicorns-party:hover{
+    cursor: pointer;
+    right: -20px;
+}
+
+.fa-grin-stars{
+    font-size: 30px;
+}
+
+.unicorn-Aristarh{
+    width: 375px;
+    height: 375px;
+    position: fixed;
+    right: 0;
+    top: 10px;
+    opacity: 0;
+    z-index: -100;
+}
+
+.unicorn-Lavrentiy{
+    width: 375px;
+    height: 375px;
+    position: fixed;
+    right: -300px;
+    top: 325px;
+    opacity: 0;
+    z-index: -100;
+}
+
+.unicorn-Magomed{
+    width: 375px;
+    height: 375px;
+    position: fixed;
+    right: 0;
+    top: 600px;
+    opacity: 0;
+    z-index: -100;
+}
+
+.run{
+    opacity: 1;
+    z-index: 100;
+    animation: animUnicorn 20s infinite linear;
+}
+
+.no-hidden{
+    opacity: 1;
+    z-index: 100;
+}

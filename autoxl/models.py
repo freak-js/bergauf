@@ -40,7 +40,6 @@ class Distributor(models.Model):
 
     @staticmethod
     def save_distributor(request):
-        print(request.POST)
         try:
             distributor = Distributor(
                 name=request.POST['name'],

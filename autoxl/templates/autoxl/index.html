@@ -10,9 +10,21 @@
 </head>
 <body  style="background-image: url({% static 'autoxl/grid.png' %});">
 
+    <!-- EASTER EGG BLOCK -->
+
+    <div class="unicorns-party" id="unicorns_party" onclick="RunMyLittleUnicorne()"><i class="far fa-grin-stars"></i>В единороголендию!</div>
+
+    <img class="unicorn-Aristarh" src="{% static 'autoxl/unicorn.png' %}" alt="Aristarh" id="Aristarh">
+
+    <img class="unicorn-Lavrentiy" src="{% static 'autoxl/unicorn.png' %}" alt="Lavrentiy" id="Lavrentiy">
+
+    <img class="unicorn-Magomed" src="{% static 'autoxl/unicorn.png' %}" alt="Magomed" id="Magomed">
+
+    <!--  -->
+
     <div class="wrap flex-center-column">
 
-        <img src="/static/logo.png" width="230">
+        <img src="/static/logo.png" width="230" onclick="StartToUnicornParty()">
 
         <span class="text">автоматизация отчетности</span>
 
@@ -336,7 +348,7 @@
 
     <script src="static/custom-file-input.js"></script>
 
-    {{ context|json_script:"hello-data" }}
+    {{ distributors_names|json_script:"hello-data" }}
  
     <script>
 
@@ -480,6 +492,34 @@
                 input_selectbox_disabled.setAttribute("disabled", "true");
 
             }
+
+        }
+
+        // EASTER EGG BLOCK JS
+
+        var click_count = 0;
+        let unicorns_party = document.getElementById('unicorns_party');
+        let Aristarh = document.getElementById('Aristarh');
+        let Lavrentiy = document.getElementById('Lavrentiy');
+        let Magomed = document.getElementById('Magomed');
+
+        function StartToUnicornParty(){
+
+            ++click_count ;
+
+            if(click_count > 10){
+
+                unicorns_party.classList.add('no-hidden');
+
+            }
+
+        }
+
+        function RunMyLittleUnicorne(){
+
+            Aristarh.classList.add("run");
+            Lavrentiy.classList.add("run");
+            Magomed.classList.add("run");
 
         }
     

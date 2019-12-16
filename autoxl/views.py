@@ -12,7 +12,7 @@ from .error_template_message import *
 def index(request):
     distributors = Distributor.objects.all().filter(active=True)
     distributors_names = [distributor.name for distributor in distributors]
-    return render(request, 'autoxl/index.html', {'context': distributors_names})
+    return render(request, 'autoxl/index.html', {'distributors_names': distributors_names})
 
 
 def notice(request):
@@ -52,7 +52,6 @@ def delete_distributor(request):
 
 @require_POST
 def change_distributor(request):
-    print(request.POST)
     id_editable_distributor = request.POST.get('id_editable_distributor')
     hidden_distributor_id = request.POST.get('hidden_distributor_id')
 
