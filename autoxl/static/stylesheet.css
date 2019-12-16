@@ -42,7 +42,7 @@ input[type="number"] {
   }
   input[type="number"]:hover,
   input[type="number"]:focus {
-    -moz-appearance: number-input;
+    -moz-appearance: textfield;
   }
 
 input:focus{
@@ -109,6 +109,10 @@ table tbody tr:hover {
     margin-bottom: 30px;
 }
 
+.ml-87{
+    margin-left: 87px;
+}
+
 .w-90{
     width: 90%;
 }
@@ -157,6 +161,10 @@ table tbody tr:hover {
 
 .select-container{
     width: 220px;
+}
+
+.select-container-search{
+    width: 305px;
 }
 
 .checkbox-container{
