@@ -350,7 +350,7 @@
             
             if(value != ''){
                 ul.innerHTML = list.filter((x)=> 
-                x.includes(value)).slice(0, 3).map((x)=> 
+                x.toLowerCase().includes(value.toLowerCase())).slice(0, 3).map((x)=> 
                 `<li onclick="SetValue(this)" data-value='${x}'">${x}</li>`).join('');
             } else {
                 ul.innerHTML = '';
