@@ -18,7 +18,7 @@
 
     <img class="unicorn-Lavrentiy" src="{% static 'autoxl/unicorn.png' %}" alt="Lavrentiy" id="Lavrentiy">
 
-    <img class="unicorn-Magomed" src="{% static 'autoxl/unicorn.png' %}" alt="Magomed" id="Magomed">
+    <img class="unicorn-Magomed" src="{% static 'autoxl/maga.png' %}" alt="Magomed" id="Magomed">
 
     <!--  -->
 
@@ -28,7 +28,7 @@
 
         <span class="text">автоматизация отчетности</span>
 
-        <form action="/go/" method="post" id="file-form" enctype="multipart/form-data">
+        <form action="/go/" method="post" id="file_form" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -360,9 +360,11 @@
 
     </div>
 
+    <span class="alert" id="alert">Имя дистрибьютора не совпадает ни с одним из имен в базе данных(учитывает регистр символов)!</span>
+
     <div class="flex-center-column">
 
-        <button class="button" type="submit" form="file-form">Отправить</button>
+        <div class="button flex-center" id="button" onclick="Submit()">Отправить</div>
 
         <a class="instruction-link" href="/instruction/">инструкция</a>
 
@@ -376,22 +378,51 @@
         const text_input = document.getElementById('text_input');
         const ul = document.getElementById('ul');
 
+        var file_form = document.getElementById('file_form');
+        var alert = document.getElementById('alert');
+
+        let selectbox_order_format = document.getElementById('selectbox_order_format');
+        let file_container = document.getElementById('file_container');
+        let file_container_label = document.getElementById('file_container_label');
+
         text_input.oninput = function () {
 
             let value = text_input.value;
             
             if(value != ''){
+
+                alert.classList.remove('alert-no-hidden');
                 ul.innerHTML = list.filter((x)=> 
                 x.toLowerCase().includes(value.toLowerCase())).slice(0, 3).map((x)=> 
                 `<li onclick="SetValue(this)" data-value='${x}'">${x}</li>`).join('');
+
             } else {
+
                 ul.innerHTML = '';
+
             }
         };
 
         function SetValue(object){
             text_input.value = object.dataset.value;
             ul.innerHTML = '';
+        }
+
+        function Submit(){
+
+            comparison = list.includes(text_input.value);
+            
+            if(comparison || text_input.value === ''){
+
+                file_form.submit();
+
+            } else {
+
+                text_input.value = '';
+                alert.classList.add('alert-no-hidden');
+
+            }
+
         }
 
         function CheckSelectBoxCompensation(){
@@ -514,10 +545,6 @@
             }
 
         }
-
-        let selectbox_order_format = document.getElementById('selectbox_order_format');
-        let file_container = document.getElementById('file_container');
-        let file_container_label = document.getElementById('file_container_label');
 
         function CheckSelectBoxOrderFormat(){
 
