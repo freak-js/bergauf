@@ -113,6 +113,10 @@ table tbody tr:hover {
     margin-left: 87px;
 }
 
+.mt-20{
+    margin-top: 20px;
+}
+
 .w-90{
     width: 90%;
 }
@@ -132,7 +136,7 @@ table tbody tr:hover {
 /* DIV */
 
 .wrap{
-    padding: 50px 0 160px 0;
+    padding: 50px 0 125px 0;
     flex-grow: 1;
 }
 
@@ -190,7 +194,7 @@ table tbody tr:hover {
 .button{
     width: 230px;
     height: 55px;
-    margin-bottom: 35px;
+    margin-bottom: 5px;
     background-color: #214E6E;
     color: white;
     border: 3px solid #214E6E;
@@ -284,7 +288,7 @@ table tbody tr:hover {
 }
 
 .inputfile + label {
-    font-size: 30px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.6s ease-out;
     margin-bottom: 15px;
@@ -333,7 +337,7 @@ table tbody tr:hover {
 }
 
 .search-machine li:hover{
-    background: #438fc524;
+    background: #cfe3f1;
     cursor: pointer;
 }
 
@@ -464,6 +468,19 @@ table tbody tr:hover {
     color: white;
     background: #214c6e;
     border: 2px solid #214c6e;
+}
+
+.instruction-link{
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: 500ms;
+}
+
+.instruction-link:hover{
+    color: #366b91;
+    letter-spacing: 1px;
 }
 
 /* EASTER EGG */
