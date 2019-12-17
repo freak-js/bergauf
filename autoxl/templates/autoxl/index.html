@@ -46,7 +46,7 @@
 
                     <div class="select-container">
 
-                        <select class="selectbox" name="">
+                        <select class="selectbox" name="" onchange="CheckSelectBoxOrderFormat()" id="selectbox_order_format">
 
                             <option value="">Отчет кабинета 007</option>
                             <option value="">Отчет с менеджерами</option>
@@ -338,9 +338,21 @@
 
             <div class="flex-center mt-20">
 
-                <input type="file" name="file" id="file-4" class="inputfile inputfile-3" required>
+                <div class="file-container">
 
-                <label for="file-4"><span>Загрузить файл&hellip;</span></label>
+                    <input type="file" name="file_1" id="file_1" class="inputfile" required>
+
+                    <label for="file_1"><span>Загрузить отчёт&hellip;</span></label>
+
+                </div>
+
+                <div class="file-container file-container-hidden file-container-width-0" id="file_container">
+
+                    <input type="file" name="file_2" id="file_2" class="inputfile2" required>
+
+                    <label class="overflow-hidden" for="file_2" id="file_container_label"><span>Загрузить данные&hellip;</span></label>
+
+                </div>
 
             </div>
 
@@ -355,8 +367,6 @@
         <a class="instruction-link" href="/instruction/">инструкция</a>
 
     </div>
-
-    <script src="static/custom-file-input.js"></script>
 
     {{ distributors_names|json_script:"hello-data" }}
  
@@ -505,6 +515,40 @@
 
         }
 
+        let selectbox_order_format = document.getElementById('selectbox_order_format');
+        let file_container = document.getElementById('file_container');
+        let file_container_label = document.getElementById('file_container_label');
+
+        function CheckSelectBoxOrderFormat(){
+
+            if(selectbox_order_format.options.selectedIndex == 1){
+
+                file_container.classList.remove('file-container-width-0');
+                setTimeout(ShowItems, 500);
+
+            }else{
+
+                file_container.classList.add('file-container-hidden');
+                file_container_label.classList.add('overflow-hidden');
+                setTimeout(HiddenItems, 500);
+
+            }
+
+        }
+
+        function ShowItems(){
+
+            file_container.classList.remove('file-container-hidden');
+            file_container_label.classList.remove('overflow-hidden');
+
+        }
+
+        function HiddenItems(){
+
+            file_container.classList.add('file-container-width-0');
+
+        }
+
         // EASTER EGG BLOCK JS
 
         var click_count = 0;
@@ -534,6 +578,8 @@
         }
     
     </script>
+
+    <script src="static/custom-file-input.js"></script>
 
 </body>
 </html>

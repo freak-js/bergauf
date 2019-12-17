@@ -79,6 +79,9 @@ def change_distributor(request):
         return redirect('distributors')
 
 
+def go(request):
+    pass
+
 
 
 # def go(request):
