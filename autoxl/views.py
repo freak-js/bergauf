@@ -53,25 +53,24 @@ def delete_distributor(request):
 @require_POST
 def change_distributor(request):
     id_editable_distributor = request.POST.get('id_editable_distributor')
-    hidden_distributor_id = request.POST.get('hidden_distributor_id')
+    distributor_id_from_hidden_input = request.POST.get('hidden_distributor_id')
 
-    if not any([id_editable_distributor, hidden_distributor_id]):
+    if not any([id_editable_distributor, distributor_id_from_hidden_input]):
         #log
         return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_ID_ERROR)
 
-    if all([id_editable_distributor, hidden_distributor_id]):
+    if all([id_editable_distributor, distributor_id_from_hidden_input]):
         #log
         return redirect_to_error_page(request)
-
     distributor = get_object_or_404(
         Distributor,
-        pk=id_editable_distributor if id_editable_distributor else hidden_distributor_id
+        pk=id_editable_distributor if id_editable_distributor else distributor_id_from_hidden_input
     )
 
     if id_editable_distributor:
         return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
 
-    if hidden_distributor_id:
+    if distributor_id_from_hidden_input:
         try:
             distributor.change(request)
         except Exception:
