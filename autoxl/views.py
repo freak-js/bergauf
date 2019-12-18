@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
-from .utils.utils import redirect_to_error_page
+from .utils.utils import redirect_to_error_page, get_case
 from .utils.error_messages import *
 
 
@@ -56,11 +56,9 @@ def change_distributor(request):
     distributor_id_from_hidden_input = request.POST.get('hidden_distributor_id')
 
     if not any([id_editable_distributor, distributor_id_from_hidden_input]):
-        # log
         return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_ID_ERROR)
 
     if all([id_editable_distributor, distributor_id_from_hidden_input]):
-        # log
         return redirect_to_error_page(request)
     distributor = get_object_or_404(
         Distributor,
@@ -79,7 +77,8 @@ def change_distributor(request):
 
 
 def go(request):
-    case =
+    case = get_case(request)
+    print(case)
     pass
 
 # def go(request):

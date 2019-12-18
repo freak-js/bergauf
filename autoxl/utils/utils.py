@@ -3,6 +3,7 @@ from .constants import *
 from .error_messages import *
 from typing import Union
 import re
+from .cases import CaseCabinet007TonsBagbonus
 
 
 """
@@ -13,6 +14,33 @@ import re
 def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResponse:
     return render(request, 'autoxl/notice.html', {'context': f'Произошла ошибка {context}'})
 
+
+def get_case(request):
+    post = request.POST
+    file1 = request.FILES.get('file_1')
+    file2 = request.FILES.get('file_2')
+
+    if post['variant_compensation_selectbox'] == '1':
+
+        if post['report_format_selectbox'] == '1':
+            if post['sales_units_selectbox'] == '1':
+                if post['bonus_type_selectbox'] == '1':
+                    bonus_count = post['bonus_count_input']
+                    case = CaseCabinet007TonsBagbonus(file1, bonus_count)
+                    return case
+                if post['bonus_type_selectbox'] == '2':
+                    pass
+            else:
+                redirect_to_error_page(request, SALES_UNITS_ERROR)
+
+        if post['report_format_selectbox'] == '2':
+            pass
+
+        if post['report_format_selectbox'] == '3':
+            pass
+
+    if post['variant_compensation_selectbox'] == '2':
+        pass
 
 def get_product_mass(string: str) -> Union[int, bool]:
     pattern = r'([1-9][0-9]?)[\sк][кг][кг]?'

@@ -26,7 +26,6 @@ class Distributor(models.Model):
 
 
     def change(self, request):
-        print(request.POST)
         self.name = request.POST['name']
         self.recipient_first_name = request.POST['first_name']
         self.recipient_last_name = request.POST['last_name']
