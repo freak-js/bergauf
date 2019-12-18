@@ -46,11 +46,11 @@
 
                     <div class="select-container">
 
-                        <select class="selectbox" name="" onchange="CheckSelectBoxOrderFormat()" id="selectbox_order_format">
+                        <select name="report_format_selectbox" class="selectbox" onchange="CheckSelectBoxOrderFormat()" id="selectbox_order_format">
 
-                            <option value="">Отчет кабинета 007</option>
-                            <option value="">Отчет с менеджерами</option>
-                            <option value="">Отчет без менеджеров</option>
+                            <option value="1">Отчет кабинета 007</option>
+                            <option value="2">Отчет с менеджерами</option>
+                            <option value="3">Отчет без менеджеров</option>
 
                         </select>
 
@@ -70,10 +70,10 @@
 
                     <div class="select-container">
 
-                        <select class="selectbox" name="">
+                        <select name="sales_units_selectbox" class="selectbox">
 
-                            <option value="">Тонны</option>
-                            <option value="">Мешки</option>
+                            <option value="1">Тонны</option>
+                            <option value="2">Мешки</option>
 
                         </select>
 
@@ -93,10 +93,10 @@
 
                     <div class="select-container">
 
-                        <select class="selectbox" name="" onchange="CheckSelectBox()" id="selectbox">
+                        <select name="bonus_type_selectbox" class="selectbox" onchange="CheckSelectBox()" id="selectbox">
 
-                            <option value="">Бонус за мешок</option>
-                            <option value="">Фиксированный бонус</option>
+                            <option value="1">Бонус за мешок</option>
+                            <option value="2">Фиксированный бонус</option>
 
                         </select>
 
@@ -118,11 +118,11 @@
 
                         <div class="select-container">
 
-                            <select disabled class="selectbox" name="" id="input_selectbox_disabled">
+                            <select name="fixed_bonus_selectbox" disabled class="selectbox" id="input_selectbox_disabled">
 
-                                <option value="">Паллеты</option>
-                                <option value="">Мешка</option>
-                                <option value="">Тонны</option>
+                                <option value="1">Паллеты</option>
+                                <option value="2">Мешка</option>
+                                <option value="3">Тонны</option>
 
                             </select>
 
@@ -146,7 +146,7 @@
 
                         <div class="select-container">
 
-                            <input disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="input_number_disabled">
+                            <input name="product_count_input" disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="input_number_disabled">
 
                         </div>  
 
@@ -166,7 +166,7 @@
 
                             <span class="label">Акция кратная</span>
 
-                            <input class="checkbox" disabled type="checkbox" id="input_checkbox_disabled">
+                            <input name="action_checkbox" class="checkbox" disabled type="checkbox" id="input_checkbox_disabled">
 
                         </div>  
 
@@ -186,7 +186,7 @@
 
                     <div class="select-container">
 
-                        <input class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off">
+                        <input name="bonus_count_input" class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off">
 
                     </div>  
 
@@ -204,7 +204,7 @@
 
                     <div class="select-container">
 
-                        <select class="selectbox" name="" onchange="CheckSelectBoxCompensation()" id="selectbox_compensation">
+                        <select name="variant_compensation_selectbox" class="selectbox" onchange="CheckSelectBoxCompensation()" id="selectbox_compensation">
 
                             <option value="">Кабинет 007</option>
                             <option value="">Карты</option>
@@ -229,7 +229,7 @@
 
                         <div class="select-container">
 
-                            <input disabled class="inputnumber" type="text" placeholder="Введите название" id="card_text" autocomplete="off">
+                            <input name="action_name_input" disabled class="inputnumber" type="text" placeholder="Введите название" id="card_text" autocomplete="off">
 
                         </div>  
 
@@ -251,7 +251,7 @@
 
                         <div class="select-container">
 
-                            <input disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="card_number" autocomplete="off">
+                            <input name="marketing_activity_number_input" disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="card_number" autocomplete="off">
 
                         </div>  
 
@@ -273,7 +273,7 @@
 
                         <div class="select-container">
 
-                            <select disabled class="selectbox" name="" id="card_selectbox">
+                            <select name="cost_item_selectbox" disabled class="selectbox" id="card_selectbox">
 
                                 <option value="">МБ</option>
                                 <option value="">ЛИ</option>
@@ -288,7 +288,7 @@
 
                 </div>
 
-                <!-- ВЫБОР ФИРМЫ ОТПРАВКИ КАРТ CHECKBOX (СКРЫВАЕТСЯ) -->
+                <!-- ВЫБОР ФОРМЫ ОТПРАВКИ КАРТ CHECKBOX (СКРЫВАЕТСЯ) -->
 
                 <div class="flex-center mb-10 animate-height-no" id="card_div_checkbox">
 
@@ -300,7 +300,7 @@
 
                             <span class="label">На сотрудника</span>
 
-                            <input class="checkbox" disabled type="checkbox" id="card_checkbox">
+                            <input name="card_checkbox" class="checkbox" disabled type="checkbox" id="card_checkbox">
 
                         </div>  
 
@@ -320,7 +320,7 @@
 
                     <div class="select-container-search">
 
-                        <input class="inputnumber" type="text" placeholder="Поиск дистрибьютора" id="text_input" autocomplete="off">
+                        <input name="distributor_name_input" class="inputnumber" type="text" placeholder="Поиск дистрибьютора" id="text_input" autocomplete="off">
 
                         <a class="link-add-distributor" href="/distributor/" title="Добавить дистрибьютора"><i class="fas fa-user-plus link-add-distributor-icon"></i></a>
 
@@ -340,7 +340,7 @@
 
                 <div class="file-container">
 
-                    <input type="file" name="file_1" id="file_1" class="inputfile" required>
+                    <input type="file" name="file_1" id="file_1" class="inputfile">
 
                     <label for="file_1"><span>Загрузить отчёт&hellip;</span></label>
 
@@ -348,7 +348,7 @@
 
                 <div class="file-container file-container-hidden file-container-width-0" id="file_container">
 
-                    <input type="file" name="file_2" id="file_2" class="inputfile2" required>
+                    <input type="file" name="file_2" id="file_2" class="inputfile2">
 
                     <label class="overflow-hidden" for="file_2" id="file_container_label"><span>Загрузить данные&hellip;</span></label>
 

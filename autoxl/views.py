@@ -3,10 +3,11 @@ from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page
 from .utils.error_messages import *
+
+
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
 # from openpyxl.writer.excel import save_virtual_workbook
-
 
 
 def index(request):
@@ -44,7 +45,6 @@ def delete_distributor(request):
         distributor_id = int(request.POST.get('id_delete_distributor'))
     except TypeError:
         return redirect_to_error_page(request)
-
     distributor = get_object_or_404(Distributor, pk=distributor_id)
     distributor.kill()
     return redirect('distributors')
@@ -56,11 +56,11 @@ def change_distributor(request):
     distributor_id_from_hidden_input = request.POST.get('hidden_distributor_id')
 
     if not any([id_editable_distributor, distributor_id_from_hidden_input]):
-        #log
+        # log
         return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_ID_ERROR)
 
     if all([id_editable_distributor, distributor_id_from_hidden_input]):
-        #log
+        # log
         return redirect_to_error_page(request)
     distributor = get_object_or_404(
         Distributor,
@@ -79,9 +79,8 @@ def change_distributor(request):
 
 
 def go(request):
+    case =
     pass
-
-
 
 # def go(request):
 #     work_sheet = get_work_sheet(request)
