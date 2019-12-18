@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page
-from .error_messages import *
+from .utils.error_messages import *
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
 # from openpyxl.writer.excel import save_virtual_workbook

@@ -10,8 +10,6 @@ PNE = 'Ошибка валидации телефонного номера'
 
 MNE = 'Ошибка валидации имени'
 
-PME = 'Ошибка получения массы продукта, нет соответсвия стандартным значениям'
-
 PCE = 'Отсутсвует код продукта'
 
 PTE = 'Ошибка в значении тоннажа'
@@ -122,16 +120,6 @@ def generate_report(work_sheet, bonus_count):
     return report if not errors_list else errors_list
 
 
-# Supporting:
-
-def get_kilograms_from_tons(tons):
-    try:
-        kilograms = float(tons) * 1000
-    except ValueError:
-        return False
-    return kilograms
-
-
 def get_work_sheet(request):
     try:
         excel_file = request.FILES.get('file')
@@ -143,19 +131,3 @@ def get_work_sheet(request):
     return work_sheet
 
 
-def get_product_mass(string):
-    mass = str()
-
-    for symbol in string:
-        if symbol.isdigit():
-            mass += symbol
-        if mass and not symbol.isdigit():
-            if mass not in PRODUCT_MASS:
-                mass = ''
-            if mass in PRODUCT_MASS:
-                return int(mass)
-    return False
-
-
-def validate_phone_number(phone_number):  # TODO
-    pass
