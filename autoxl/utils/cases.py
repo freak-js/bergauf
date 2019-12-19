@@ -2,7 +2,13 @@ import openpyxl
 from . import utils
 
 
+"""
+ГЕНАРТОРЫ ДАННЫХ
+"""
+
+
 class BaseOneFileCabinet:
+
 
     def __init__(self, file, bonus_count):
         self.bonus_count = bonus_count
@@ -10,6 +16,7 @@ class BaseOneFileCabinet:
         self.first_sheet = self.work_book.get_sheet_names()[0]
         self.work_sheet = self.work_book.get_sheet_by_name(self.first_sheet)
         self.data = self.get_managers_data()
+
 
     def get_managers_data(self):
         iteration, free_cell = 0, 0
@@ -43,16 +50,50 @@ class BaseOneFileCabinet:
         return managers_data
 
 
+"""
+ОБРАБОТЧИКИ ДАННЫХ
+"""
+
+
 class BaseBugBonus(BaseOneFileCabinet):
+
 
     def __init__(self, file, bonus_count):
         super().__init__(file, bonus_count)
-        self.work_report = self.get_work_report()
-        # cabinet_report = get_cabinet_report()
+        self.report_file = openpyxl.Workbook()
+
+
+    def get_cabinet_report(self):
+        work_sheet = self.report_file.create_sheet('Отчет для сдачи', 1)
+        iteration = 0
+
+        for manager in self.data:
+            iteration += 1
+            total_tons_for_this_manager = 0
+            telephone_number = manager[0]
+            if not telephone_number:
+                break
+            work_sheet[f'A{iteration}'] = telephone_number
+            iteration += 1
+            manager_name = manager[1]
+            work_sheet[f'A{iteration}'] = manager_name
+            iteration += 1
+            work_sheet[f'A{iteration}'] = '00208'
+
+            for manager_data in manager[2]:
+                nomenclature = manager_data[0]
+                tons = float(manager_data[2])
+                product_mass = utils.get_product_mass(nomenclature)
+                bags_count = tons * 1000 / product_mass
+                bonus_sum = bags_count * self.bonus_count
+                total_tons_for_this_manager += bonus_sum
+
+            work_sheet[f'B{iteration}'] = total_tons_for_this_manager / 200
+            iteration += 1
+
 
     def get_work_report(self):
-        work_book = openpyxl.Workbook()
-        work_sheet = work_book.active
+        work_sheet = self.report_file.create_sheet('Рабочий отчет', 0)
         work_sheet['B1'] = 'Номенклатурный код'
         work_sheet['C1'] = 'Тоннаж'
         work_sheet['D1'] = 'Вес единицы продукта'
@@ -95,7 +136,6 @@ class BaseBugBonus(BaseOneFileCabinet):
         work_sheet[f'A{iteration}'] = 'Итого:'
         work_sheet[f'E{iteration}'] = total_bags_count
         work_sheet[f'G{iteration}'] = total_bonus_sum
-        return work_book
 
 
 '''

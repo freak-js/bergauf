@@ -78,29 +78,13 @@ def change_distributor(request):
 
 
 def go(request):
-    case = get_case(request)
-    work_report = case.work_report
+    report = get_case(request)
+    report.get_work_report()
+    report.get_cabinet_report()
     response = HttpResponse(
-        save_virtual_workbook(work_report),
+        save_virtual_workbook(report.report_file),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = 'attachment; filename=report.xlsx'
     return response
 
-# def go(request):
-#     work_sheet = get_work_sheet(request)
-#     bonus_count = int(request.POST.get('number'))
-#
-#     if work_sheet:
-#         report = generate_report(work_sheet, bonus_count)
-#
-#         if isinstance(report, list):
-#             return render(request, 'autoxl/notice.html', {'errors': report})
-#
-#         response = HttpResponse(
-#             save_virtual_workbook(report),
-#             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-#         )
-#         response['Content-Disposition'] = 'attachment; filename=report.xlsx'
-#         return response
-#     return render(request, 'autoxl/notice.html', {'context': 'Произошла ошибка'})

@@ -1,6 +1,5 @@
 from django.db import models, IntegrityError
 from django.shortcuts import get_object_or_404
-from typing import Union
 
 
 class Distributor(models.Model):
