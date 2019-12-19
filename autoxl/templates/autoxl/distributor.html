@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление дистрибьютора</title>
+    {% load static %}
+    <link rel="stylesheet" href="/static/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
+</head>
+<body style="background-image: url({% static 'autoxl/grid.png' %});">
+
+    <div class="wrap flex-center-column">
+
+        <div class="distributor-form">
+
+            <img src="/static/logo.png" width="120">
+
+            <span class="span-distributor">добавление дистрибьютора</span>
+
+            <span class="span-help-text">(Название дистрибьютора в соответсвии с 1С УПП)</span>
+            
+            <form action="/save_distributor/" method="post">
+
+                {% csrf_token %}
+
+                <div class="flex-center-column">
+
+                    <input class="input-distributor" name="name" type="text" placeholder="Название дистрибьютора" required autocomplete="off">
+
+                    <input class="input-distributor" name="external_id" type="text" placeholder="Внешний ID" required autocomplete="off">
+
+                    <input class="input-distributor" name="region" type="text" placeholder="Территория" required autocomplete="off">
+
+                    <input class="input-distributor" name="first_name" type="text" placeholder="Имя получателя" required autocomplete="off">
+
+                    <input class="input-distributor" name="last_name" type="text" placeholder="Фамилия" required autocomplete="off">
+
+                    <input class="input-distributor" name="patronymic" type="text" placeholder="Отчество(не обязательно)" autocomplete="off">
+
+                    <input class="input-distributor" name="address" type="text" placeholder="Адрес" required autocomplete="off">
+
+                    <input class="input-distributor" name="telephone_number" type="tel" placeholder="Номер телефона" required autocomplete="off">
+
+                    <button class="button-distributor" type="submit">Сохранить</button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
