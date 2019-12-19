@@ -66,6 +66,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         work_sheet['F1'] = 'Бонус за 1 мешок'
         work_sheet['G1'] = 'Сумма бонуса'
         iteration = 1
+
         for manager in self.data:
             iteration += 1
             telephone_number = manager[0]
@@ -76,14 +77,22 @@ class BaseBugBonus(BaseOneFileCabinet):
             manager_name = manager[1]
             work_sheet[f'A{iteration}'] = manager_name
             iteration += 1
+
             for manager_data in manager[2]:
-                work_sheet[f'A{iteration}'] = manager_data[0]
-                work_sheet[f'B{iteration}'] = manager_data[1]
-                work_sheet[f'C{iteration}'] = manager_data[2]
-                work_sheet[f'D{iteration}'] = utils.get_product_mass(manager_data[0])
-                work_sheet[f'E{iteration}'] = float(manager_data[2]) * 1000 / utils.get_product_mass(manager_data[0])
+
+                nomenclature = manager_data[0]
+                nomenclature_code = manager_data[1]
+                tons = float(manager_data[2])
+                product_mass = utils.get_product_mass(nomenclature)
+
+                work_sheet[f'A{iteration}'] = nomenclature
+                work_sheet[f'B{iteration}'] = nomenclature_code
+                work_sheet[f'C{iteration}'] = tons
+                work_sheet[f'D{iteration}'] = product_mass
+                work_sheet[f'E{iteration}'] = tons * 1000 / product_mass
                 work_sheet[f'F{iteration}'] = self.bonus_count
-                work_sheet[f'G{iteration}'] = float(manager_data[2]) * 1000 / utils.get_product_mass(manager_data[0]) * self.bonus_count
+                work_sheet[f'G{iteration}'] = tons * 1000 / product_mass * self.bonus_count
+
                 iteration += 1
         return work_book
 
