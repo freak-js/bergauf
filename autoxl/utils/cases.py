@@ -60,7 +60,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         work_sheet['F1'] = 'Бонус за 1 мешок'
         work_sheet['G1'] = 'Сумма бонуса'
         iteration = 1
-        total_bags_count, total_bonus_count = 0, 0
+        total_bags_count, total_bonus_sum = 0, 0
 
         for manager in self.data:
             telephone_number = manager[0]
@@ -79,9 +79,9 @@ class BaseBugBonus(BaseOneFileCabinet):
                 tons = float(manager_data[2])
                 product_mass = utils.get_product_mass(nomenclature)
                 bags_count = tons * 1000 / product_mass
-                bonus_count = bags_count * self.bonus_count
+                bonus_sum = bags_count * self.bonus_count
                 total_bags_count += bags_count
-                total_bonus_count += bonus_count
+                total_bonus_sum += bonus_sum
 
                 work_sheet[f'A{iteration}'] = nomenclature
                 work_sheet[f'B{iteration}'] = nomenclature_code
@@ -89,12 +89,12 @@ class BaseBugBonus(BaseOneFileCabinet):
                 work_sheet[f'D{iteration}'] = product_mass
                 work_sheet[f'E{iteration}'] = bags_count
                 work_sheet[f'F{iteration}'] = self.bonus_count
-                work_sheet[f'G{iteration}'] = bonus_count
+                work_sheet[f'G{iteration}'] = bonus_sum
                 iteration += 1
 
         work_sheet[f'A{iteration}'] = 'Итого:'
         work_sheet[f'E{iteration}'] = total_bags_count
-        work_sheet[f'G{iteration}'] = total_bonus_count
+        work_sheet[f'G{iteration}'] = total_bonus_sum
         return work_book
 
 
