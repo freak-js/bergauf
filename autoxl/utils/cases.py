@@ -24,21 +24,21 @@ class BaseOneFileCabinet:
         new_phone_number, new_manager_name = True, True
         while free_cell < 2:
             iteration += 1
-            cell_A = self.work_sheet[f'A{iteration}'].value
-            cell_B = self.work_sheet[f'B{iteration}'].value
-            cell_C = self.work_sheet[f'C{iteration}'].value
-            if cell_A:
+            cell_a = self.work_sheet[f'A{iteration}'].value
+            cell_b = self.work_sheet[f'B{iteration}'].value
+            cell_c = self.work_sheet[f'C{iteration}'].value
+            if cell_a:
                 free_cell = 0
                 if new_phone_number:
-                    manager.append(cell_A)
+                    manager.append(cell_a)
                     new_phone_number = False
                     continue
                 if not new_phone_number and new_manager_name:
-                    manager.append(cell_A)
+                    manager.append(cell_a)
                     new_manager_name = False
                     continue
                 else:
-                    manager_data.append([cell_A, cell_B, cell_C])
+                    manager_data.append([cell_a, cell_b, cell_c])
                     continue
             else:
                 manager.append(manager_data)

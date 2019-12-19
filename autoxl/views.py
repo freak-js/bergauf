@@ -6,11 +6,6 @@ from .utils.error_messages import *
 from openpyxl.writer.excel import save_virtual_workbook
 
 
-# from .utils import get_work_sheet, generate_report
-# from django.http import HttpResponse
-
-
-
 def index(request):
     distributors = Distributor.objects.all().filter(active=True)
     distributors_names = [distributor.name for distributor in distributors]
@@ -77,7 +72,7 @@ def change_distributor(request):
         return redirect('distributors')
 
 
-def go(request):
+def get_report(request):
     report = get_case(request)
     report.get_work_report()
     report.get_cabinet_report()

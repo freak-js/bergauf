@@ -5,7 +5,7 @@ from autoxl import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('go/', views.go, name='go'),
+    path('get_report/', views.get_report, name='get_report'),
     path('notice/', views.notice, name='notice'),
     path('distributor/', views.distributor, name='distributor'),
     path('distributors/', views.distributors, name='distributors'),

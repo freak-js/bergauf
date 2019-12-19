@@ -28,7 +28,7 @@
 
         <span class="text">автоматизация отчетности</span>
 
-        <form action="/go/" method="post" id="file_form" enctype="multipart/form-data">
+        <form action="/get_report/" method="post" id="file_form" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -336,6 +336,8 @@
 
             </div>
 
+            <!-- FILE INPUTS -->
+
             <div class="flex-center mt-20">
 
                 <div class="file-container">
@@ -355,6 +357,8 @@
                 </div>
 
             </div>
+
+            <!-- --- -->
 
         </form>
 
