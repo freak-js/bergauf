@@ -78,7 +78,7 @@ def change_distributor(request):
 
 def go(request):
     case = get_case(request)
-    print(case)
+    print(case.data)
     pass
 
 # def go(request):
