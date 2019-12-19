@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from .utils.utils import redirect_to_error_page, get_case
 from .utils.error_messages import *
+from openpyxl.writer.excel import save_virtual_workbook
 
 
 # from .utils import get_work_sheet, generate_report
 # from django.http import HttpResponse
-# from openpyxl.writer.excel import save_virtual_workbook
+
 
 
 def index(request):
@@ -78,8 +79,13 @@ def change_distributor(request):
 
 def go(request):
     case = get_case(request)
-    print(case.data)
-    pass
+    work_report = case.work_report
+    response = HttpResponse(
+        save_virtual_workbook(work_report),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=report.xlsx'
+    return response
 
 # def go(request):
 #     work_sheet = get_work_sheet(request)
