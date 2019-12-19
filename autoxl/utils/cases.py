@@ -12,13 +12,9 @@ class BaseOneFileCabinet:
         self.data = self.get_managers_data()
 
     def get_managers_data(self):
-        iteration = 0
-        free_cell = 0
-        managers_data = []
-        manager = []
-        manager_data = []
-        new_phone_number = True
-        new_manager_name = True
+        iteration, free_cell = 0, 0
+        managers_data, manager, manager_data = [], [], []
+        new_phone_number, new_manager_name = True, True
         while free_cell < 2:
             iteration += 1
             cell_A = self.work_sheet[f'A{iteration}'].value
@@ -40,10 +36,8 @@ class BaseOneFileCabinet:
             else:
                 manager.append(manager_data)
                 managers_data.append(manager)
-                manager = []
-                manager_data = []
-                new_phone_number = True
-                new_manager_name = True
+                manager, manager_data = [], []
+                new_phone_number, new_manager_name = True, True
                 free_cell += 1
                 continue
         return managers_data
@@ -66,12 +60,13 @@ class BaseBugBonus(BaseOneFileCabinet):
         work_sheet['F1'] = 'Бонус за 1 мешок'
         work_sheet['G1'] = 'Сумма бонуса'
         iteration = 1
+        total_bags_count, total_bonus_count = 0, 0
 
         for manager in self.data:
-            iteration += 1
             telephone_number = manager[0]
             if not telephone_number:
                 break
+            iteration += 1
             work_sheet[f'A{iteration}'] = telephone_number
             iteration += 1
             manager_name = manager[1]
@@ -79,21 +74,27 @@ class BaseBugBonus(BaseOneFileCabinet):
             iteration += 1
 
             for manager_data in manager[2]:
-
                 nomenclature = manager_data[0]
                 nomenclature_code = manager_data[1]
                 tons = float(manager_data[2])
                 product_mass = utils.get_product_mass(nomenclature)
+                bags_count = tons * 1000 / product_mass
+                bonus_count = bags_count * self.bonus_count
+                total_bags_count += bags_count
+                total_bonus_count += bonus_count
 
                 work_sheet[f'A{iteration}'] = nomenclature
                 work_sheet[f'B{iteration}'] = nomenclature_code
                 work_sheet[f'C{iteration}'] = tons
                 work_sheet[f'D{iteration}'] = product_mass
-                work_sheet[f'E{iteration}'] = tons * 1000 / product_mass
+                work_sheet[f'E{iteration}'] = bags_count
                 work_sheet[f'F{iteration}'] = self.bonus_count
-                work_sheet[f'G{iteration}'] = tons * 1000 / product_mass * self.bonus_count
-
+                work_sheet[f'G{iteration}'] = bonus_count
                 iteration += 1
+
+        work_sheet[f'A{iteration}'] = 'Итого:'
+        work_sheet[f'E{iteration}'] = total_bags_count
+        work_sheet[f'G{iteration}'] = total_bonus_count
         return work_book
 
 
