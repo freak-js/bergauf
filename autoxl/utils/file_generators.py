@@ -120,14 +120,3 @@ def generate_report(work_sheet, bonus_count):
     return report if not errors_list else errors_list
 
 
-def get_work_sheet(request):
-    try:
-        excel_file = request.FILES.get('file')
-        work_book = openpyxl.load_workbook(excel_file)
-        first_sheet = work_book.get_sheet_names()[0]
-        work_sheet = work_book.get_sheet_by_name(first_sheet)
-    except Exception:
-        return False
-    return work_sheet
-
-
