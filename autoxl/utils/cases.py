@@ -67,12 +67,14 @@ class BaseBugBonus(BaseOneFileCabinet):
         work_sheet['G1'] = 'Сумма бонуса'
         iteration = 1
         for manager in self.data:
-            if manager == [[]]:
+            iteration += 1
+            telephone_number = manager[0]
+            if not telephone_number:
                 break
+            work_sheet[f'A{iteration}'] = telephone_number
             iteration += 1
-            work_sheet[f'A{iteration}'] = manager[0]
-            iteration += 1
-            work_sheet[f'A{iteration}'] = manager[1]
+            manager_name = manager[1]
+            work_sheet[f'A{iteration}'] = manager_name
             iteration += 1
             for manager_data in manager[2]:
                 work_sheet[f'A{iteration}'] = manager_data[0]
