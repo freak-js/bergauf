@@ -186,7 +186,7 @@
 
                     <div class="select-container">
 
-                        <input name="bonus_count_input" class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off">
+                        <input name="bonus_count_input" class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off" oninput="BonusCountChange()" id="bonus_count_input">
 
                     </div>  
 
@@ -342,7 +342,7 @@
 
                 <div class="file-container">
 
-                    <input name="file_1" type="file" id="file_1" class="inputfile">
+                    <input name="file_1" type="file" id="file_1" class="inputfile" onchange="File1Change()">
 
                     <label for="file_1"><span>Загрузить отчёт&hellip;</span></label>
 
@@ -364,7 +364,7 @@
 
     </div>
 
-    <span class="alert" id="alert">Имя дистрибьютора не совпадает ни с одним из имен в базе данных(учитывает регистр символов)!</span>
+    <span class="alert" id="alert">######</span>
 
     <div class="flex-center-column">
 
@@ -412,22 +412,85 @@
             ul.innerHTML = '';
         }
 
-        function Submit(){
+        // ВАЛИДАЦИОННЫЕ ФУНКЦИИ
 
-            comparison = list.includes(text_input.value);
-            
-            if(comparison || text_input.value === ''){
+        function ValidateBonusCount(){
 
-                file_form.submit();
+            let bonus_count_input = document.getElementById('bonus_count_input');
+
+            if(bonus_count_input.value != ''){
+
+                return true;
 
             } else {
 
-                text_input.value = '';
+                alert.innerHTML = 'Вы забыли указать размер бонуса.';
                 alert.classList.add('alert-no-hidden');
+                return false;
 
             }
 
         }
+
+        function BonusCountChange(){
+
+            alert.classList.remove('alert-no-hidden');
+
+        }
+
+        function ValidateComparsionDistributorForDBValue(){
+
+            comparison = list.includes(text_input.value);
+
+            if(comparison || text_input.value === ''){
+
+                return true;
+
+            } else {
+
+                text_input.value = '';
+                alert.innerHTML = 'Имя дистрибьютора не совпадает ни с одним из имен в базе данных! Учитывается регистр символов!'
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            }
+        }
+
+        function ValidateFile1Input(){
+
+            file_1 = document.getElementById('file_1');
+            
+            if(file_1.value != ''){
+
+                return true;
+
+            } else {
+
+                alert.innerHTML = 'Вы забыли загрузить файл с отчетами.';
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            }
+
+        }
+
+        function File1Change(){
+
+            alert.classList.remove('alert-no-hidden');
+
+        }
+
+        function Submit(){
+
+            if (ValidateBonusCount() && ValidateComparsionDistributorForDBValue() && ValidateFile1Input()){
+
+                file_form.submit();
+                
+                }
+
+        }
+
+        // ФУНКЦИИ УПРАВЛЕНИЯ ДИНАМИЧЕСКИМ ПОЯВЛЕНИЕМ БЛОКОВ
 
         function CheckSelectBoxCompensation(){
 
