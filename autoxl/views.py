@@ -4,6 +4,8 @@ from .models import Distributor
 from .utils.utils import redirect_to_error_page, get_case
 from .utils.error_messages import *
 from openpyxl.writer.excel import save_virtual_workbook
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout, login
 
 
 def index(request):
@@ -23,6 +25,11 @@ def distributor(request):
 def distributors(request):
     distributors = Distributor.objects.all().filter(active=True).order_by('-add_date')
     return render(request, 'autoxl/distributors.html', {'distributors': distributors})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 
 @require_POST
