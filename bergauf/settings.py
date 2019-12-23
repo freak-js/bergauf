@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'autoxl'
+    'autoxl',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'autoxl.User'
+
+LOGIN_REDIRECT_URL = '/welcome/'
+
+LOGIN_URL = '/login/'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

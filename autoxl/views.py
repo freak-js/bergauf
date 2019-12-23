@@ -1,37 +1,51 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.decorators.http import require_POST
 from .models import Distributor
+from django.contrib.auth.forms import AuthenticationForm
 from .utils.utils import redirect_to_error_page, get_case
 from .utils.error_messages import *
 from openpyxl.writer.excel import save_virtual_workbook
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout
 
 
-def index(request):
+@login_required
+def auth(request):
+    if request.method == 'POST':
+        AuthenticationForm(request.POST)
+    form = AuthenticationForm
+    return render(request, 'autoxl/auth.html', {'form': form})
+
+
+@login_required
+def welcome(request):
     distributors = Distributor.objects.all().filter(active=True)
     distributors_names = [distributor.name for distributor in distributors]
-    return render(request, 'autoxl/index.html', {'distributors_names': distributors_names})
+    return render(request, 'autoxl/welcome.html', {'distributors_names': distributors_names})
 
 
+@login_required
 def notice(request):
     return render(request, 'autoxl/notice.html')
 
 
+@login_required
 def distributor(request):
     return render(request, 'autoxl/distributor.html')
 
 
+@login_required
 def distributors(request):
     distributors = Distributor.objects.all().filter(active=True).order_by('-add_date')
     return render(request, 'autoxl/distributors.html', {'distributors': distributors})
 
 
-def logout_view(request):
+def logout_views(request):
     logout(request)
     return redirect('login')
 
 
+@login_required
 @require_POST
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
@@ -42,6 +56,7 @@ def save_distributor(request):
     return redirect_to_error_page(request)
 
 
+@login_required
 @require_POST
 def delete_distributor(request):
     try:
@@ -53,6 +68,7 @@ def delete_distributor(request):
     return redirect('distributors')
 
 
+@login_required
 @require_POST
 def change_distributor(request):
     id_editable_distributor = request.POST.get('id_editable_distributor')
@@ -79,6 +95,8 @@ def change_distributor(request):
         return redirect('distributors')
 
 
+@login_required
+@require_POST
 def get_report(request):
     report = get_case(request)
     report.get_work_report()
