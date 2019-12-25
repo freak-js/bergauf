@@ -49,7 +49,7 @@ def logout_views(request):
 @require_POST
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
-    if isinstance(distributor, str):
+    if isinstance(distributor, str): #TODO переписать это говно
         return redirect_to_error_page(request, f'{UNIQUE_EXTERNAL_ID_ERROR} {distributor}')
     if distributor:
         return redirect('distributors')
@@ -72,22 +72,14 @@ def delete_distributor(request):
 @require_POST
 def change_distributor(request):
     id_editable_distributor = request.POST.get('id_editable_distributor')
-    distributor_id_from_hidden_input = request.POST.get('hidden_distributor_id')
-
-    if not any([id_editable_distributor, distributor_id_from_hidden_input]):
-        return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_ID_ERROR)
-
-    if all([id_editable_distributor, distributor_id_from_hidden_input]):
-        return redirect_to_error_page(request)
-    distributor = get_object_or_404(
-        Distributor,
-        pk=id_editable_distributor if id_editable_distributor else distributor_id_from_hidden_input
-    )
+    id_from_hidden_input = request.POST.get('hidden_distributor_id')
+    pk = id_editable_distributor or id_from_hidden_input
+    distributor = get_object_or_404(Distributor, pk=pk)
 
     if id_editable_distributor:
         return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
 
-    if distributor_id_from_hidden_input:
+    if id_from_hidden_input:
         try:
             distributor.change(request)
         except Exception:

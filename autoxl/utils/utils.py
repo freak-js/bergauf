@@ -5,12 +5,15 @@ import re
 from . import constants
 from .cases import CaseCabinetTonsBagbonus
 
+
 """
 Модуль вспомогательных утилит
 """
 
+
 def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResponse:
     return render(request, 'autoxl/notice.html', {'context': f'Произошла ошибка {context}'})
+
 
 def get_product_mass(string: str) -> Union[int, bool]:
     pattern = r'([1-9][0-9]?)[\sк][кг][кг]?'
@@ -18,6 +21,7 @@ def get_product_mass(string: str) -> Union[int, bool]:
     if result in constants.PRODUCT_MASS:
         return int(result)
     return False
+
 
 def validate_phone_number(phone_number: str) -> Union[bool, str]:
     if len(phone_number) < 7 or len(phone_number) > 18:
@@ -27,12 +31,14 @@ def validate_phone_number(phone_number: str) -> Union[bool, str]:
             return False
     return phone_number
 
+
 def get_kilograms_from_tons(tons: str) -> Union[bool, float]:
     try:
         kilograms = float(tons) * 1000
     except ValueError:
         return False
     return kilograms
+
 
 def get_case(request):
     post = request.POST
