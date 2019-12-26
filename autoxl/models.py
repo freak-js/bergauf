@@ -1,7 +1,8 @@
 from django.db import models, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import AbstractUser
-
+from django.shortcuts import HttpResponse
+from typing import Union
 
 class User(AbstractUser):
     username = models.CharField(verbose_name='Логин', max_length=150, unique=True)
@@ -24,16 +25,16 @@ class Distributor(models.Model):
     active = models.BooleanField("Статус удален/активен", default=True)
 
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
-    def kill(self):
+    def kill(self) -> None:
         self.active = False
         self.save(update_fields=['active'])
 
 
-    def change(self, request):
+    def change(self, request: HttpResponse) -> None:
         self.name = request.POST['name']
         self.recipient_first_name = request.POST['first_name']
         self.recipient_last_name = request.POST['last_name']
@@ -46,7 +47,7 @@ class Distributor(models.Model):
 
 
     @staticmethod
-    def save_distributor(request):
+    def save_distributor(request: HttpResponse) -> Union[bool, str, models.Model]:
         try:
             distributor = Distributor(
                 name=request.POST['name'],
