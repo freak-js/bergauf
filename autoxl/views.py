@@ -51,18 +51,15 @@ def save_distributor(request):
     distributor = Distributor.save_distributor(request)
     if isinstance(distributor, str): #TODO переписать это говно
         return redirect_to_error_page(request, f'{UNIQUE_EXTERNAL_ID_ERROR} {distributor}')
-    if distributor:
-        return redirect('distributors')
+    if distributor: return redirect('distributors')
     return redirect_to_error_page(request)
 
 
 @login_required
 @require_POST
 def delete_distributor(request):
-    try:
-        distributor_id = int(request.POST.get('id_delete_distributor'))
-    except TypeError:
-        return redirect_to_error_page(request)
+    try: distributor_id = int(request.POST.get('id_delete_distributor'))
+    except TypeError: return redirect_to_error_page(request)
     distributor = get_object_or_404(Distributor, pk=distributor_id)
     distributor.kill()
     return redirect('distributors')
@@ -80,10 +77,8 @@ def change_distributor(request):
         return render(request, 'autoxl/change_distributor.html', {'distributor': distributor})
 
     if id_from_hidden_input:
-        try:
-            distributor.change(request)
-        except Exception:
-            return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_SAVE_ERROR)
+        try: distributor.change(request)
+        except Exception: return redirect_to_error_page(request, CHANGE_DISTRIBUTOR_SAVE_ERROR)
         return redirect('distributors')
 
 
@@ -91,11 +86,9 @@ def change_distributor(request):
 @require_POST
 def get_report(request):
     report = get_case(request)
-    if report.errors:
-        return render(request, 'autoxl/notice.html', {'errors': report.errors})
+    if report.errors: return render(request, 'autoxl/notice.html', {'errors': report.errors})
     report.get_work_report()
     report.get_cabinet_report()
-
     response = HttpResponse(
         save_virtual_workbook(report.report_file),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
