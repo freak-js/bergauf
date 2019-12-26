@@ -12,11 +12,13 @@ from .cases import CaseCabinetTonsBagbonus
 
 
 def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResponse:
+    """Функция редиректа на страницу уведомления об ошибках
+    """
     return render(request, 'autoxl/notice.html', {'context': f'Произошла ошибка {context}'})
 
 
 def get_product_mass(string: str) -> Union[int, bool]:
-    pattern = r'([1-9][0-9]?)[\sк][кг][кг]?'
+    pattern = r'([1-9][0-9]?)[\sкл][\sкгл][кг]?'
     result = re.findall(pattern, string)
     if result:
         kilograms = result[0]
@@ -25,7 +27,8 @@ def get_product_mass(string: str) -> Union[int, bool]:
     return False
 
 
-def validate_phone_number(phone_number: str) -> bool:
+def validate_phone_number(raw_phone_number: Union[str, int]) -> bool:
+    phone_number = str(raw_phone_number)
     if len(phone_number) < 7 or len(phone_number) > 18:
         return False
     for symbol in phone_number:
@@ -35,20 +38,37 @@ def validate_phone_number(phone_number: str) -> bool:
 
 
 def validate_manager_name(manager_name: str) -> bool:
-    if isinstance(manager_name, str):
+    for symbol in manager_name:
+        if not symbol.isalpha() and symbol not in (' ', '.'):
+            return False
         return True if len(manager_name) > 5 else False
-    return False
 
 
-def get_kilograms_from_tons(tons: str) -> Union[bool, float]:
-    try:
-        kilograms: float = float(tons) * 1000
-    except ValueError:
-        return False
-    return kilograms
+def validate_tons_value(tons: str) -> bool:
+    try: float(tons) * 1000
+    except Exception: return False
+    return True
 
 
-def get_case(request):
+def validate_division(nomenclature: str, tons: str) -> bool:
+    product_mass = get_product_mass(nomenclature)
+    bags_count = float(tons) * 1000 % product_mass
+    return False if bags_count else True
+
+
+def validate_cell_value(cell_a, cell_c) -> dict:
+    if not get_product_mass(cell_a.value):
+        return {'error': [cell_a.row, cell_a.value, cell_a.coordinate, PRODUCT_MASS_VALIDATION_ERROR]}
+
+    if not validate_tons_value(cell_c.value):
+        return {'error':[cell_c.row, cell_c.value, cell_c.coordinate, MASS_VALIDATION_ERROR]}
+
+    if not validate_division(cell_a.value, cell_c.value):
+        return {'error': [cell_c.row, cell_c.value, cell_c.coordinate, MASS_DIVISION_VALIDATION_ERROR]}
+    return {'validate': True}
+
+
+def get_case(request: HttpResponse):
     post = request.POST
     file1 = request.FILES.get('file_1')
     file2 = request.FILES.get('file_2')

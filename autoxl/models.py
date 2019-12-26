@@ -62,6 +62,5 @@ class Distributor(models.Model):
         except IntegrityError:
             distributor_from_db = get_object_or_404(Distributor, external_id=request.POST['external_id'])
             return distributor_from_db.name
-        except Exception:
-            return False
+        except Exception: return False
         return distributor

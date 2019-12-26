@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.views.decorators.http import require_POST
 from .models import Distributor
 from django.contrib.auth.forms import AuthenticationForm
-from .utils.utils import redirect_to_error_page, get_case
+from .utils.utilits import redirect_to_error_page, get_case
 from .utils.error_messages import *
 from openpyxl.writer.excel import save_virtual_workbook
 from django.contrib.auth.decorators import login_required
@@ -91,10 +91,11 @@ def change_distributor(request):
 @require_POST
 def get_report(request):
     report = get_case(request)
-    report.get_work_report()
-    report.get_cabinet_report()
     if report.errors:
         return render(request, 'autoxl/notice.html', {'errors': report.errors})
+    report.get_work_report()
+    report.get_cabinet_report()
+
     response = HttpResponse(
         save_virtual_workbook(report.report_file),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

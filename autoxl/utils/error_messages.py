@@ -12,6 +12,10 @@ MANAGER_NAME_VALIDATION_ERROR = 'Ошибка валидации имени ме
 
 PRODUCT_MASS_VALIDATION_ERROR = 'Ошибка получения массы продукта, нет соответсвия стандартным значениям!'
 
+MASS_VALIDATION_ERROR = 'Ошибка валидации массы! Невозможно выполнить математическую операцию!'
+
+MASS_DIVISION_VALIDATION_ERROR = 'Результатом операции расчета количества мешков является не целое число!'
+
 # VALUE ERRORS
 
 CELL_VALUE_ERROR = 'Пустое значение ячейки!'
