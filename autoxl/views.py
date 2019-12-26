@@ -93,6 +93,8 @@ def get_report(request):
     report = get_case(request)
     report.get_work_report()
     report.get_cabinet_report()
+    if report.errors:
+        return render(request, 'autoxl/notice.html', {'errors': report.errors})
     response = HttpResponse(
         save_virtual_workbook(report.report_file),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

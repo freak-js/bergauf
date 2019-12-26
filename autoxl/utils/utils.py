@@ -17,24 +17,32 @@ def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResp
 
 def get_product_mass(string: str) -> Union[int, bool]:
     pattern = r'([1-9][0-9]?)[\sк][кг][кг]?'
-    result = re.findall(pattern, string)[0]
-    if result in constants.PRODUCT_MASS:
-        return int(result)
+    result = re.findall(pattern, string)
+    if result:
+        kilograms = result[0]
+        if kilograms in constants.PRODUCT_MASS:
+            return int(kilograms)
     return False
 
 
-def validate_phone_number(phone_number: str) -> Union[bool, str]:
+def validate_phone_number(phone_number: str) -> bool:
     if len(phone_number) < 7 or len(phone_number) > 18:
         return False
     for symbol in phone_number:
         if symbol not in constants.TELEPHONE_NUMBER_VALID_SYMBOLS:
             return False
-    return phone_number
+    return True
+
+
+def validate_manager_name(manager_name: str) -> bool:
+    if isinstance(manager_name, str):
+        return True if len(manager_name) > 5 else False
+    return False
 
 
 def get_kilograms_from_tons(tons: str) -> Union[bool, float]:
     try:
-        kilograms = float(tons) * 1000
+        kilograms: float = float(tons) * 1000
     except ValueError:
         return False
     return kilograms

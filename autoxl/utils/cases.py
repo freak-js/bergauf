@@ -1,5 +1,6 @@
 import openpyxl
 from . import utils
+from .error_messages import *
 
 
 """
@@ -15,38 +16,56 @@ class BaseOneFileCabinet:
         self.work_book = openpyxl.load_workbook(file)
         self.work_sheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
         self.data = self.get_managers_data()
+        self.managers_data = self.data.get('managers_data')
+        self.errors = self.data.get('errors')
 
 
     def get_managers_data(self):
         iteration, free_cell = 0, 0
-        managers_data, manager, manager_data = [], [], []
+        managers_data, manager, manager_data, errors = [], [], [], []
         new_phone_number, new_manager_name = True, True
         while free_cell < 2:
             iteration += 1
-            cell_a = self.work_sheet[f'A{iteration}'].value
-            cell_b = self.work_sheet[f'B{iteration}'].value
-            cell_c = self.work_sheet[f'C{iteration}'].value
-            if cell_a:
+            cell_a = self.work_sheet[f'A{iteration}']
+            cell_b = self.work_sheet[f'B{iteration}']
+            cell_c = self.work_sheet[f'C{iteration}']
+
+            if cell_a.value and not cell_c.value:
                 free_cell = 0
+
                 if new_phone_number:
-                    manager.append(cell_a)
-                    new_phone_number = False
-                    continue
+                    if utils.validate_phone_number(cell_a.value):
+                        manager.append(cell_a.value)
+                        new_phone_number = False
+                        continue
+                    errors.append([cell_a.row, cell_a.value, cell_a.coordinate, PHONE_NUMBER_VALIDATION_ERROR])
+
                 if not new_phone_number and new_manager_name:
-                    manager.append(cell_a)
-                    new_manager_name = False
+                    if utils.validate_manager_name(cell_a.value):
+                        manager.append(cell_a.value)
+                        new_manager_name = False
+                        continue
+                    errors.append([cell_a.row, cell_a.value, cell_a.coordinate, MANAGER_NAME_VALIDATION_ERROR])
+
+                if not new_phone_number and not new_manager_name:
+                    errors.append([cell_c.row, cell_c.value, cell_c.coordinate, CELL_VALUE_ERROR])
                     continue
-                else:
-                    manager_data.append([cell_a, cell_b, cell_c])
+
+            if cell_a.value and cell_c.value:
+                if not utils.get_product_mass(cell_a.value):
+                    errors.append([cell_a.row, cell_a.value, cell_a.coordinate, PRODUCT_MASS_VALIDATION_ERROR])
                     continue
-            else:
+                manager_data.append([cell_a.value, cell_b.value, cell_c.value])
+                continue
+
+            if not cell_a.value and not cell_b.value and not cell_c.value:
                 manager.append(manager_data)
                 managers_data.append(manager)
                 manager, manager_data = [], []
                 new_phone_number, new_manager_name = True, True
                 free_cell += 1
                 continue
-        return managers_data
+        return {'managers_data': managers_data, 'errors': errors}
 
 
 """
@@ -63,10 +82,11 @@ class BaseBugBonus(BaseOneFileCabinet):
 
 
     def get_cabinet_report(self):
+        print(self.managers_data)
         work_sheet = self.report_file.create_sheet('Отчет для сдачи', 1)
         iteration = 1
 
-        for manager in self.data:
+        for manager in self.managers_data:
             total_tons_for_this_manager = 0
             if not self.set_telephone_and_name_in_cabinet_report(work_sheet, iteration, manager):
                 break
@@ -106,7 +126,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         self.set_work_report_title(work_sheet)
         iteration = 1
         total_bags_count, total_bonus_sum = 0, 0
-        for manager in self.data:
+        for manager in self.managers_data:
             if not self.set_telephone_and_name_in_work_report(work_sheet, iteration, manager):
                 break
             iteration += 3
@@ -116,11 +136,10 @@ class BaseBugBonus(BaseOneFileCabinet):
                 total_bonus_sum += calculation['bonus_sum']
                 self.set_work_report_cell_value(work_sheet, iteration, calculation)
                 iteration += 1
-            self.summarize(work_sheet, iteration, total_bags_count, total_bonus_sum)
+        self.summarize(work_sheet, iteration, total_bags_count, total_bonus_sum)
 
 
     def summarize(self, work_sheet, iteration, total_bags_count, total_bonus_sum):
-        iteration +=1
         work_sheet[f'A{iteration}'] = 'Итого:'
         work_sheet[f'E{iteration}'] = total_bags_count
         work_sheet[f'G{iteration}'] = total_bonus_sum
