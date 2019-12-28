@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Система автоматизации</title>
+    {% load static %}
+    <link rel="stylesheet" href="/static/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9fe4522470.js" crossorigin="anonymous"></script>
+</head>
+<body  style="background-image: url({% static 'autoxl/grid.png' %});">
+
+    <!-- EASTER EGG BLOCK -->
+
+    <div class="unicorns-party" id="unicorns_party" onclick="RunMyLittleUnicorne()"><i class="far fa-grin-stars"></i>В единороголендию!</div>
+
+    <img class="unicorn-Aristarh" src="{% static 'autoxl/unicorn.png' %}" alt="Aristarh" id="Aristarh">
+
+    <img class="unicorn-Lavrentiy" src="{% static 'autoxl/unicorn.png' %}" alt="Lavrentiy" id="Lavrentiy">
+
+    <img class="unicorn-Magomed" src="{% static 'autoxl/maga.png' %}" alt="Magomed" id="Magomed">
+
+    <!--  -->
+
+    <div class="wrap flex-center-column">
+
+        <img src="/static/logo.png" width="230" onclick="StartToUnicornParty()">
+
+        <span class="text">автоматизация отчетности</span>
+
+        <form action="/get_report/" method="post" id="file_form" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="container flex-center-column">
+
+                <!-- ФОРМАТ ОТЧЕТА SELECTBOX -->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Формат отчета:</span>
+
+                    </div>
+
+                    <div class="select-container">
+
+                        <select name="report_format_selectbox" class="selectbox" onchange="CheckSelectBoxOrderFormat()" id="selectbox_order_format">
+
+                            <option value="1">Отчет кабинета 007</option>
+                            <option value="2">Отчет с менеджерами</option>
+                            <option value="3">Отчет без менеджеров</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- ЕДИНИЦЫ ПРОДАЖИ SELECTBOX -->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Продажи, единицы:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <select name="sales_units_selectbox" class="selectbox">
+
+                            <option value="1">Тонны</option>
+                            <option value="2">Мешки</option>
+
+                        </select>
+
+                    </div>  
+
+                </div>
+
+                <!-- ТИП БОНУСА SELECTBOX -->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Тип бонуса:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <select name="bonus_type_selectbox" class="selectbox" onchange="CheckSelectBox()" id="selectbox">
+
+                            <option value="1">Бонус за мешок</option>
+                            <option value="2">Фиксированный бонус</option>
+
+                        </select>
+
+                    </div>  
+
+                </div>
+
+                <!-- ВЫБОР БОНУСА С ЕДИНИЦЫ ВЕСА SELECTBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="div_selectbox">
+
+                    <div class="flex-center animate-opacity-no" id="div_opacity_selectbox">
+
+                        <div class="label-box">
+
+                            <span class="label">Фиксированный бонус с:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <select name="fixed_bonus_selectbox" disabled class="selectbox" id="input_selectbox_disabled">
+
+                                <option value="1">Паллеты</option>
+                                <option value="2">Мешка</option>
+                                <option value="3">Тонны</option>
+
+                            </select>
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- КОЛИЧЕСТВО ПРОДУКТА INPUT NUMBER (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="div_input">
+
+                    <div class="flex-center animate-opacity-no" id="div_opacity_number">
+
+                        <div class="label-box">
+
+                            <span class="label">Количество:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input name="product_count_input" disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="input_number_disabled">
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- КРАТНОСТЬ АКЦИИ ЧЕКБОКС CHECKBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="div_checkbox">
+
+                    <div class="flex-center animate-opacity-no" id="div_opacity_checkbox">
+
+                        <div class="label-box"></div>
+
+                        <div class="select-container checkbox-container">
+
+                            <span class="label">Акция кратная</span>
+
+                            <input name="action_checkbox" class="checkbox" disabled type="checkbox" id="input_checkbox_disabled">
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- РАЗМЕР БОНУСА INPUT NUMBER -->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Размер бонуса:</span>
+                        
+                    </div>
+
+                    <div class="select-container">
+
+                        <input name="bonus_count_input" class="inputnumber" type="number" min="1" placeholder="Введите значение" autocomplete="off" oninput="BonusCountChange()" id="bonus_count_input">
+
+                    </div>  
+
+                </div>
+
+                <!-- СПОСОБ КОМПЕНСАЦИИ SELECTBOX-->
+
+                <div class="flex-center mb-10">
+
+                    <div class="label-box">
+
+                        <span class="label">Способ компенсации:</span>
+
+                    </div>
+
+                    <div class="select-container">
+
+                        <select name="variant_compensation_selectbox" class="selectbox" onchange="CheckSelectBoxCompensation()" id="selectbox_compensation">
+
+                            <option value="1">Кабинет 007</option>
+                            <option value="2">Карты</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <!-- НАЗВАНИЕ АКЦИИ INPUT TEXT (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_text">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_text">
+
+                        <div class="label-box">
+
+                            <span class="label">Название акции:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input name="action_name_input" disabled class="inputnumber" type="text" placeholder="Введите название" id="card_text" autocomplete="off">
+
+                        </div>  
+
+                    </div>
+    
+                </div>
+
+                <!-- НОМЕР МАРКЕТИНГОВОЙ АКТИВНОСТИ INPUT NUMBER (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_number">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_number">
+
+                        <div class="label-box">
+
+                            <span class="label">Номер маркетинговой активности:</span>
+                            
+                        </div>
+
+                        <div class="select-container">
+
+                            <input name="marketing_activity_number_input" disabled class="inputnumber" type="number" min="1" placeholder="Введите значение" id="card_number" autocomplete="off">
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- СТАТЬЯ БЮДЖЕТА SELECTBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_selectbox">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_selectbox">
+
+                        <div class="label-box">
+
+                            <span class="label">Статья бюджета:</span>
+
+                        </div>
+
+                        <div class="select-container">
+
+                            <select name="cost_item_selectbox" disabled class="selectbox" id="card_selectbox">
+
+                                <option value="">МБ</option>
+                                <option value="">ЛИ</option>
+                                <option value="">DIY</option>
+                                <option value="">ФИ</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ВЫБОР ФОРМЫ ОТПРАВКИ КАРТ CHECKBOX (СКРЫВАЕТСЯ) -->
+
+                <div class="flex-center mb-10 animate-height-no" id="card_div_checkbox">
+
+                    <div class="flex-center animate-opacity-no" id="card_opacity_checkbox">
+
+                        <div class="label-box"></div>
+
+                        <div class="select-container checkbox-container">
+
+                            <span class="label">На сотрудника</span>
+
+                            <input name="card_checkbox" class="checkbox" disabled type="checkbox" id="card_checkbox">
+
+                        </div>  
+
+                    </div>
+
+                </div>
+
+                <!-- ДИСТРИБЬЮТОР INPUT TEXT-->
+
+                <div class="flex-center mb-10 ml-87">
+
+                    <div class="label-box">
+
+                        <span class="label">Дистрибьютор:</span>
+                        
+                    </div>
+
+                    <div class="select-container-search">
+
+                        <input name="distributor_name_input" class="inputnumber" type="text" placeholder="Поиск дистрибьютора" id="text_input" autocomplete="off">
+
+                        <a class="link-add-distributor" href="/distributor/" title="Добавить дистрибьютора"><i class="fas fa-user-plus link-add-distributor-icon"></i></a>
+
+                        <a class="link-list-distributor" href="/distributors/" title="Список дистрибьюторов"><i class="fas fa-list-ul link-add-distributor-icon"></i></a>
+
+                        <ul class="search-machine" id="ul"></ul>
+
+                    </div>  
+    
+                </div>
+
+                <!-- КОНЕЦ -->
+
+            </div>
+
+            <!-- FILE INPUTS -->
+
+            <div class="flex-center mt-20">
+
+                <div class="file-container">
+
+                    <input name="file_1" type="file" id="file_1" class="inputfile" onchange="File1Change()">
+
+                    <label for="file_1"><span>Загрузить отчёт&hellip;</span></label>
+
+                </div>
+
+                <div class="file-container file-container-hidden file-container-width-0" id="file_container">
+
+                    <input name="file_2" type="file" id="file_2" class="inputfile2" onchange="File2Change()">
+
+                    <label class="overflow-hidden" for="file_2" id="file_container_label"><span>Загрузить данные&hellip;</span></label>
+
+                </div>
+
+            </div>
+
+            <!-- --- -->
+
+        </form>
+
+    </div>
+
+    <span class="alert-error" id="alert">######</span>
+
+    <div class="flex-center-column">
+
+        <div class="button flex-center" id="button" onclick="Submit()">Отправить</div>
+
+        <div class="link-bottom">
+
+            <a class="instruction-link" href="/instruction/">инструкция</a>
+
+            <a class="instruction-link" href="/logout/">выход</a>
+
+        </div>
+
+    </div>
+
+    {{ distributors_names|json_script:"hello-data" }}
+ 
+    <script>
+
+        const list = JSON.parse(document.getElementById('hello-data').textContent);
+        const text_input = document.getElementById('text_input');
+        const ul = document.getElementById('ul');
+
+        var file_form = document.getElementById('file_form');
+        var alert = document.getElementById('alert');
+
+        let selectbox_order_format = document.getElementById('selectbox_order_format');
+        let file_container = document.getElementById('file_container');
+        let file_container_label = document.getElementById('file_container_label');
+
+        let selectbox_compensation = document.getElementById('selectbox_compensation');
+
+        text_input.oninput = function () {
+
+            let value = text_input.value;
+            
+            if(value != ''){
+
+                alert.classList.remove('alert-no-hidden');
+                ul.innerHTML = list.filter((x)=> 
+                x.toLowerCase().includes(value.toLowerCase())).slice(0, 3).map((x)=> 
+                `<li onclick="SetValue(this)" data-value='${x}'">${x}</li>`).join('');
+
+            } else {
+
+                ul.innerHTML = '';
+
+            }
+        };
+
+        function SetValue(object){
+            text_input.value = object.dataset.value;
+            ul.innerHTML = '';
+        }
+
+        // ВАЛИДАЦИОННЫЕ ФУНКЦИИ
+
+        function ValidateBonusCount(){
+
+            let bonus_count_input = document.getElementById('bonus_count_input');
+
+            if(bonus_count_input.value != ''){
+
+                return true;
+
+            } else {
+
+                alert.innerHTML = 'Вы забыли указать размер бонуса.';
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            }
+
+        }
+
+        function BonusCountChange(){
+
+            alert.classList.remove('alert-no-hidden');
+
+        }
+
+        function ValidateDistributorValue(){
+
+            comparison = list.includes(text_input.value);
+
+            if(selectbox_compensation.options.selectedIndex == 0 && (comparison || text_input.value === '')){
+
+                return true;
+
+            } else if(selectbox_compensation.options.selectedIndex == 0 && comparison == 'false' && text_input.value != ''){
+
+                text_input.value = '';
+                alert.innerHTML = 'Имя дистрибьютора не совпадает ни с одним из имен в базе данных! Учитывается регистр символов!'
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            } else if(selectbox_compensation.options.selectedIndex == 1 && (comparison == false || text_input.value === '')){
+
+                if(comparison == false && text_input.value != ''){
+
+                    text_input.value = '';
+                    alert.innerHTML = 'Имя дистрибьютора не совпадает ни с одним из имен в базе данных! Учитывается регистр символов!'
+                    alert.classList.add('alert-no-hidden');
+                    return false
+
+                }
+
+                if(text_input.value === ''){
+
+                    alert.innerHTML = 'При выбранном способе компенсации поле "Дистрибьютор" является обязательным к заполнению!'
+                    alert.classList.add('alert-no-hidden');
+                    return false
+
+                }
+
+            } else if(selectbox_compensation.options.selectedIndex == 1 && comparison){
+
+                return true
+
+            }
+        }
+
+        function ValidateFile1Input(){
+
+            let file_1 = document.getElementById('file_1');
+            
+            if(file_1.value != ''){
+
+                return true;
+
+            } else {
+
+                alert.innerHTML = 'Вы забыли загрузить файл с отчетами.';
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            }
+
+        }
+
+        function File1Change(){
+
+            alert.classList.remove('alert-no-hidden');
+
+        }
+
+        function ValidateFile2Input(){
+
+            let file_2 = document.getElementById('file_2');
+
+            if(selectbox_order_format.options.selectedIndex != 1){
+
+                return true
+
+            } else {
+
+                alert.innerHTML = 'Вы забыли загрузить второй файл с данными.';
+                alert.classList.add('alert-no-hidden');
+                return false;
+
+            }
+
+        }
+
+        function File2Change(){
+
+            alert.classList.remove('alert-no-hidden');
+
+        }
+
+        function Submit(){
+
+            if (ValidateBonusCount() && ValidateDistributorValue() && ValidateFile1Input() && ValidateFile2Input()){
+
+                file_form.submit();
+                
+                }
+
+        }
+
+        // ФУНКЦИИ УПРАВЛЕНИЯ ДИНАМИЧЕСКИМ ПОЯВЛЕНИЕМ БЛОКОВ
+
+        function CheckSelectBoxCompensation(){
+
+            // Элементы для управления высотой 
+
+            let card_div_text = document.getElementById('card_div_text');
+            let card_div_number = document.getElementById('card_div_number');
+            let card_div_selectbox = document.getElementById('card_div_selectbox');
+            let card_div_checkbox = document.getElementById('card_div_checkbox');
+
+            // Элементы для управления прозрачностью
+
+            let card_opacity_text = document.getElementById('card_opacity_text');
+            let card_opacity_number = document.getElementById('card_opacity_number');
+            let card_opacity_selectbox = document.getElementById('card_opacity_selectbox');
+            let card_opacity_checkbox = document.getElementById('card_opacity_checkbox');
+
+            // Элементы для блокирования доступа в скрытом состоянии
+
+            let card_text = document.getElementById('card_text');
+            let card_number = document.getElementById('card_number');
+            let card_selectbox = document.getElementById('card_selectbox');
+            let card_checkbox = document.getElementById('card_checkbox');
+
+            if (selectbox_compensation.options.selectedIndex == 1){
+
+                card_div_text.classList.add('animate-height');
+                card_div_number.classList.add('animate-height');
+                card_div_selectbox.classList.add('animate-height');
+                card_div_checkbox.classList.add('animate-height');
+
+                card_opacity_text.classList.add('animate-opacity');
+                card_opacity_number.classList.add('animate-opacity');
+                card_opacity_selectbox.classList.add('animate-opacity');
+                card_opacity_checkbox.classList.add('animate-opacity');
+
+                card_text.removeAttribute('disabled');
+                card_number.removeAttribute('disabled');
+                card_selectbox.removeAttribute('disabled');
+                card_checkbox.removeAttribute('disabled');
+
+            } else {
+
+                card_div_text.classList.remove('animate-height');
+                card_div_number.classList.remove('animate-height');
+                card_div_selectbox.classList.remove('animate-height');
+                card_div_checkbox.classList.remove('animate-height');
+
+                card_opacity_text.classList.remove('animate-opacity');
+                card_opacity_number.classList.remove('animate-opacity');
+                card_opacity_selectbox.classList.remove('animate-opacity');
+                card_opacity_checkbox.classList.remove('animate-opacity');
+
+                card_text.setAttribute("disabled", "true");
+                card_number.setAttribute("disabled", "true");
+                card_selectbox.setAttribute("disabled", "true");
+                card_checkbox.setAttribute("disabled", "true");
+
+            }
+
+        }
+    
+        function CheckSelectBox(){
+
+            // selectbox - для получения значения выбранного пункта option
+
+            let selectbox = document.getElementById('selectbox');
+
+            // Элементы для управления высотой 
+
+            let div_selectbox = document.getElementById('div_selectbox');
+            let div_input = document.getElementById('div_input');
+            let div_checkbox = document.getElementById('div_checkbox');
+
+            // Элементы для управления прозрачностью
+
+            let div_opacity_checkbox = document.getElementById('div_opacity_checkbox');
+            let div_opacity_number = document.getElementById('div_opacity_number');
+            let div_opacity_selectbox = document.getElementById('div_opacity_selectbox');
+
+            // Элементы для блокирования доступа в скрытом состоянии
+
+            let input_checkbox_disabled = document.getElementById('input_checkbox_disabled');
+            let input_number_disabled = document.getElementById('input_number_disabled');
+            let input_selectbox_disabled = document.getElementById('input_selectbox_disabled')
+
+            if (selectbox.options.selectedIndex == 1){
+
+                div_opacity_checkbox.classList.add('animate-opacity');
+                div_opacity_number.classList.add('animate-opacity');
+                div_opacity_selectbox.classList.add('animate-opacity');
+
+                div_selectbox.classList.add('animate-height');
+                div_input.classList.add('animate-height');
+                div_checkbox.classList.add('animate-height');
+
+                input_checkbox_disabled.removeAttribute('disabled');
+                input_number_disabled.removeAttribute('disabled');
+                input_selectbox_disabled.removeAttribute('disabled');
+
+            } else {
+
+                div_opacity_checkbox.classList.remove('animate-opacity');
+                div_opacity_number.classList.remove('animate-opacity');
+                div_opacity_selectbox.classList.remove('animate-opacity');
+
+                div_selectbox.classList.remove('animate-height');
+                div_input.classList.remove('animate-height');
+                div_checkbox.classList.remove('animate-height');
+
+                input_checkbox_disabled.setAttribute("disabled", "true");
+                input_number_disabled.setAttribute("disabled", "true");
+                input_selectbox_disabled.setAttribute("disabled", "true");
+
+            }
+
+        }
+
+        function CheckSelectBoxOrderFormat(){
+
+            if(selectbox_order_format.options.selectedIndex == 1){
+
+                file_container.classList.remove('file-container-width-0');
+                setTimeout(ShowItems, 500);
+
+            }else{
+
+                file_container.classList.add('file-container-hidden');
+                file_container_label.classList.add('overflow-hidden');
+                setTimeout(HiddenItems, 500);
+
+            }
+
+        }
+
+        function ShowItems(){
+
+            file_container.classList.remove('file-container-hidden');
+            file_container_label.classList.remove('overflow-hidden');
+
+        }
+
+        function HiddenItems(){
+
+            file_container.classList.add('file-container-width-0');
+
+        }
+
+        // EASTER EGG BLOCK JS
+
+        var click_count = 0;
+        let unicorns_party = document.getElementById('unicorns_party');
+        let Aristarh = document.getElementById('Aristarh');
+        let Lavrentiy = document.getElementById('Lavrentiy');
+        let Magomed = document.getElementById('Magomed');
+
+        function StartToUnicornParty(){
+
+            ++click_count ;
+
+            if(click_count > 10){
+
+                unicorns_party.classList.add('no-hidden');
+
+            }
+
+        }
+
+        function RunMyLittleUnicorne(){
+
+            Aristarh.classList.add("run");
+            Lavrentiy.classList.add("run");
+            Magomed.classList.add("run");
+
+        }
+    
+    </script>
+
+    <script src="{% static 'autoxl/custom-file-input.js' %}"></script>
+
+</body>
+</html>
