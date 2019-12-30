@@ -1,12 +1,13 @@
+from __future__ import annotations
 from django.db import models, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import AbstractUser
 from django.shortcuts import HttpResponse
 from typing import Union
 
+
 class User(AbstractUser):
     username = models.CharField(verbose_name='Логин', max_length=150, unique=True)
-
 
     def __str__(self):
         return self.username
@@ -24,15 +25,12 @@ class Distributor(models.Model):
     add_date = models.DateTimeField("Дата и время добавления", auto_now_add=True)
     active = models.BooleanField("Статус удален/активен", default=True)
 
-
     def __str__(self) -> str:
         return self.name
-
 
     def kill(self) -> None:
         self.active = False
         self.save(update_fields=['active'])
-
 
     def change(self, request: HttpResponse) -> None:
         self.name = request.POST['name']
@@ -45,9 +43,8 @@ class Distributor(models.Model):
         self.region = request.POST['region']
         self.save()
 
-
     @staticmethod
-    def save_distributor(request: HttpResponse) -> Union[bool, str, models.Model]:
+    def save_distributor(request: HttpResponse) -> Union[bool, str, Distributor]:
         try:
             distributor = Distributor(
                 name=request.POST['name'],
@@ -63,5 +60,6 @@ class Distributor(models.Model):
         except IntegrityError:
             distributor_from_db = get_object_or_404(Distributor, external_id=request.POST['external_id'])
             return distributor_from_db.name
-        except Exception: return False
+        except Exception:
+            return False
         return distributor

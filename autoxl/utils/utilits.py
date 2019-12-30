@@ -4,6 +4,7 @@ from typing import Union
 import re
 from . import constants
 from .cases import CaseCabinetTonsBagbonus
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 """
@@ -17,14 +18,13 @@ def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResp
     return render(request, 'autoxl/notice.html', {'context': f'Произошла ошибка {context}'})
 
 
-def get_product_mass(string: str) -> Union[int, bool]:
+def get_product_mass(nomenclature: str) -> Union[int, bool]:
     """Функция получения массы продукта из номенклатуры продукта на основе
     регулярного выражения, работает для варинтов с 'к', 'кг', 'л' идущими
     после искомого числового значения
     """
     pattern = r'([1-9][0-9]?)[\sкл][\sкгл][кг]?'
-    result = re.findall(pattern, string)
-    if result:
+    if result := re.findall(pattern, nomenclature):
         kilograms = result[0]
         if kilograms in constants.PRODUCT_MASS:
             return int(kilograms)
@@ -48,13 +48,15 @@ def validate_manager_name(manager_name: str) -> bool:
         return True if len(manager_name) > 5 else False
 
 
-def validate_tons_value(tons: str) -> bool:
-    try: float(tons) * 1000
-    except Exception: return False
+def validate_tons_value(tons: Union[int, float]) -> bool:
+    try:
+        float(tons) * 1000
+    except ValueError:
+        return False
     return True
 
 
-def validate_division(nomenclature: str, tons: str) -> bool:
+def validate_division(nomenclature: str, tons: Union[int, float]) -> bool:
     product_mass = get_product_mass(nomenclature)
     bags_count = float(tons) * 1000 % product_mass
     return False if bags_count else True
@@ -73,7 +75,7 @@ def validate_cell_value(cell_a, cell_c) -> dict:
         return {'error': [cell_a.row, cell_a.value, cell_a.coordinate, PRODUCT_MASS_VALIDATION_ERROR]}
 
     if not validate_tons_value(cell_c.value):
-        return {'error':[cell_c.row, cell_c.value, cell_c.coordinate, MASS_VALIDATION_ERROR]}
+        return {'error': [cell_c.row, cell_c.value, cell_c.coordinate, MASS_VALIDATION_ERROR]}
 
     if not validate_division(cell_a.value, cell_c.value):
         return {'error': [cell_c.row, cell_c.value, cell_c.coordinate, MASS_DIVISION_VALIDATION_ERROR]}
@@ -86,17 +88,18 @@ def get_case(request: HttpResponse):
     данных полученных из файла/файлов формата .xlsx
     """
     post = request.POST
-    file1 = request.FILES.get('file_1')
-    file2 = request.FILES.get('file_2')
+    file1: InMemoryUploadedFile = request.FILES.get('file_1')
+    file2: InMemoryUploadedFile = request.FILES.get('file_2')
 
     if post['variant_compensation_selectbox'] == '1':
 
         if post['report_format_selectbox'] == '1':
             if post['sales_units_selectbox'] == '1':
+
                 if post['bonus_type_selectbox'] == '1':
                     bonus_count = int(post['bonus_count_input'])
-                    case = CaseCabinetTonsBagbonus(file1, bonus_count)
-                    return case
+                    return CaseCabinetTonsBagbonus(file1, bonus_count)
+
                 if post['bonus_type_selectbox'] == '2':
                     if post['fixed_bonus_selectbox'] == '1':
                         if post['action_checkbox'] == '':
@@ -124,5 +127,3 @@ def get_case(request: HttpResponse):
 
     if post['variant_compensation_selectbox'] == '2':
         pass
-
-

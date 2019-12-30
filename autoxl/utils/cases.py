@@ -1,7 +1,9 @@
 import openpyxl
 from . import utilits
 from .error_messages import *
-
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl import Workbook
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 """
 ГЕНАРТОРЫ ДАННЫХ
@@ -10,15 +12,13 @@ from .error_messages import *
 
 class BaseOneFileCabinet:
 
-
-    def __init__(self, file, bonus_count):
-        self.bonus_count = bonus_count
-        self.work_book = openpyxl.load_workbook(file)
-        self.work_sheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
+    def __init__(self, file: InMemoryUploadedFile, bonus_count: int) -> None:
+        self.bonus_count: int = bonus_count
+        self.work_book: Workbook = openpyxl.load_workbook(file)
+        self.work_sheet: Worksheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
         self.data: dict = self.get_managers_data()
         self.managers_data: list = self.data.get('managers_data')
         self.errors: list = self.data.get('errors')
-
 
     def get_managers_data(self) -> dict:
         iteration, free_cell = 0, 0
@@ -52,8 +52,7 @@ class BaseOneFileCabinet:
                     continue
 
             if cell_a.value and cell_c.value:
-                validation_result = utilits.validate_cell_value(cell_a, cell_c).get('error')
-                if validation_result:
+                if validation_result := utilits.validate_cell_value(cell_a, cell_c).get('error'):
                     errors.append(validation_result)
                     continue
                 manager_data.append([cell_a.value, cell_b.value, cell_c.value])
@@ -76,42 +75,38 @@ class BaseOneFileCabinet:
 
 class BaseBugBonus(BaseOneFileCabinet):
 
-
-    def __init__(self, file, bonus_count):
+    def __init__(self, file: InMemoryUploadedFile, bonus_count: int) -> None:
         super().__init__(file, bonus_count)
-        self.report_file = openpyxl.Workbook()
+        self.report_file: Workbook = openpyxl.Workbook()
+        self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
+        self.cabinet_007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
 
-
-    def get_cabinet_report(self):
-        work_sheet = self.report_file.create_sheet('Отчет для сдачи', 1)
-        iteration = 1
+    def get_cabinet_report(self) -> None:
+        iteration: int = 1
         for manager in self.managers_data:
-            total_tons_for_this_manager = 0
-            if not self.set_telephone_and_name_in_cabinet_report(work_sheet, iteration, manager):
+            total_tons_for_this_manager: int = 0
+            if not self.set_telephone_and_name_in_cabinet_report(iteration, manager):
                 break
             iteration += 2
 
             for manager_data in manager[2]:
                 total_tons_for_this_manager += self.get_bonus_sum(manager_data)
 
-            work_sheet[f'B{iteration}'] = total_tons_for_this_manager / 200
+            self.cabinet_007_report[f'B{iteration}'] = total_tons_for_this_manager / 200
             iteration += 2
 
+    def set_telephone_and_name_in_cabinet_report(self, iteration: int, manager: list) -> bool:
+        if telephone_number := manager[0]:
+            self.cabinet_007_report[f'A{iteration}'] = telephone_number
+            iteration += 1
+            manager_name = manager[1]
+            self.cabinet_007_report[f'A{iteration}'] = manager_name
+            iteration += 1
+            self.cabinet_007_report[f'A{iteration}'] = '00208'
+            return True
+        return False
 
-    def set_telephone_and_name_in_cabinet_report(self, work_sheet, iteration, manager):
-        telephone_number = manager[0]
-        if not telephone_number:
-            return False
-        work_sheet[f'A{iteration}'] = telephone_number
-        iteration += 1
-        manager_name = manager[1]
-        work_sheet[f'A{iteration}'] = manager_name
-        iteration += 1
-        work_sheet[f'A{iteration}'] = '00208'
-        return True
-
-
-    def get_bonus_sum(self, manager_data):
+    def get_bonus_sum(self, manager_data: list) -> float:
         nomenclature = manager_data[0]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
@@ -119,64 +114,55 @@ class BaseBugBonus(BaseOneFileCabinet):
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
 
-
-    def get_work_report(self):
-        work_sheet = self.report_file.create_sheet('Рабочий отчет', 0)
-        self.set_work_report_title(work_sheet)
+    def get_work_report(self) -> None:
+        self.set_work_report_title()
         iteration = 1
         total_bags_count, total_bonus_sum = 0, 0
         for manager in self.managers_data:
-            if not self.set_telephone_and_name_in_work_report(work_sheet, iteration, manager):
+            if not self.set_telephone_and_name_in_work_report(iteration, manager):
                 break
             iteration += 3
             for manager_data in manager[2]:
                 calculation = self.get_calculations_for_manager_data(manager_data)
                 total_bags_count += calculation['bags_count']
                 total_bonus_sum += calculation['bonus_sum']
-                self.set_work_report_cell_value(work_sheet, iteration, calculation)
+                self.set_work_report_cell_value(iteration, calculation)
                 iteration += 1
-        self.summarize(work_sheet, iteration, total_bags_count, total_bonus_sum)
+        self.summarize(iteration, total_bags_count, total_bonus_sum)
 
+    def summarize(self, iteration: int, total_bags_count: int, total_bonus_sum: int) -> None:
+        self.work_report[f'A{iteration}'] = 'Итого:'
+        self.work_report[f'E{iteration}'] = total_bags_count
+        self.work_report[f'G{iteration}'] = total_bonus_sum
 
-    def summarize(self, work_sheet, iteration, total_bags_count, total_bonus_sum):
-        work_sheet[f'A{iteration}'] = 'Итого:'
-        work_sheet[f'E{iteration}'] = total_bags_count
-        work_sheet[f'G{iteration}'] = total_bonus_sum
+    def set_telephone_and_name_in_work_report(self, iteration: int, manager: list) -> bool:
+        if telephone_number := manager[0]:
+            manager_name = manager[1]
+            iteration += 1
+            self.work_report[f'A{iteration}'] = telephone_number
+            iteration += 1
+            self.work_report[f'A{iteration}'] = manager_name
+            return True
+        return False
 
+    def set_work_report_title(self) -> None:
+        self.work_report['B1'] = 'Номенклатурный код'
+        self.work_report['C1'] = 'Тоннаж'
+        self.work_report['D1'] = 'Вес единицы продукта'
+        self.work_report['E1'] = 'Количество мешков'
+        self.work_report['F1'] = 'Бонус за 1 мешок'
+        self.work_report['G1'] = 'Сумма бонуса'
 
-    def set_telephone_and_name_in_work_report(self, work_sheet, iteration, manager):
-        telephone_number = manager[0]
-        if not telephone_number:
-            return False
-        manager_name = manager[1]
-        iteration += 1
-        work_sheet[f'A{iteration}'] = telephone_number
-        iteration += 1
-        work_sheet[f'A{iteration}'] = manager_name
-        return True
+    def set_work_report_cell_value(self, iteration: int, calculation: dict) -> None:
+        self.work_report[f'A{iteration}'] = calculation['nomenclature']
+        self.work_report[f'B{iteration}'] = calculation['nomenclature_code']
+        self.work_report[f'C{iteration}'] = calculation['tons']
+        self.work_report[f'D{iteration}'] = calculation['product_mass']
+        self.work_report[f'E{iteration}'] = calculation['bags_count']
+        self.work_report[f'F{iteration}'] = calculation['bonus_count']
+        self.work_report[f'G{iteration}'] = calculation['bonus_sum']
 
-
-    def set_work_report_title(self, work_sheet):
-        work_sheet['B1'] = 'Номенклатурный код'
-        work_sheet['C1'] = 'Тоннаж'
-        work_sheet['D1'] = 'Вес единицы продукта'
-        work_sheet['E1'] = 'Количество мешков'
-        work_sheet['F1'] = 'Бонус за 1 мешок'
-        work_sheet['G1'] = 'Сумма бонуса'
-
-
-    def set_work_report_cell_value(
-            self, work_sheet, iteration, calculation):
-        work_sheet[f'A{iteration}'] = calculation['nomenclature']
-        work_sheet[f'B{iteration}'] = calculation['nomenclature_code']
-        work_sheet[f'C{iteration}'] = calculation['tons']
-        work_sheet[f'D{iteration}'] = calculation['product_mass']
-        work_sheet[f'E{iteration}'] = calculation['bags_count']
-        work_sheet[f'F{iteration}'] = calculation['bonus_count']
-        work_sheet[f'G{iteration}'] = calculation['bonus_sum']
-
-
-    def get_calculations_for_manager_data(self, manager_data):
+    def get_calculations_for_manager_data(self, manager_data: list) -> dict:
         nomenclature = manager_data[0]
         nomenclature_code = manager_data[1]
         tons = float(manager_data[2])
