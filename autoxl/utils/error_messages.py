@@ -22,6 +22,8 @@ CELL_VALUE_ERROR = 'Пустое значение ячейки!'
 
 # NOTICE PAGE
 
+UNKNOWN_ERROR = ': неизвестная ошибка!'
+
 UNIQUE_EXTERNAL_ID_ERROR = ': дистрибьютор с таким внешним ID уже существует в базе под именем:'
 
 CHANGE_DISTRIBUTOR_ID_ERROR = ': ошибка при попытке получить ID дистрибьютора из формы, ID не был передан!'

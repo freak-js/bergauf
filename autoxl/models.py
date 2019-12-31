@@ -44,7 +44,7 @@ class Distributor(models.Model):
         self.save()
 
     @staticmethod
-    def save_distributor(request: HttpResponse) -> Union[bool, str, Distributor]:
+    def save_distributor(request: HttpResponse) -> Union[dict, bool]:
         try:
             distributor = Distributor(
                 name=request.POST['name'],
@@ -59,7 +59,7 @@ class Distributor(models.Model):
             distributor.save()
         except IntegrityError:
             distributor_from_db = get_object_or_404(Distributor, external_id=request.POST['external_id'])
-            return distributor_from_db.name
+            return {'name': distributor_from_db.name}
         except Exception:
-            return False
-        return distributor
+            return {'error': True}
+        return {'successfully': True}

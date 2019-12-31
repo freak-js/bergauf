@@ -49,11 +49,11 @@ def logout_views(request):
 @require_POST
 def save_distributor(request):
     distributor = Distributor.save_distributor(request)
-    if isinstance(distributor, str):  # TODO переписать это говно
-        return redirect_to_error_page(request, f'{UNIQUE_EXTERNAL_ID_ERROR} {distributor}')
-    if distributor:
+    if name := distributor.get('name'):
+        return redirect_to_error_page(request, f'{UNIQUE_EXTERNAL_ID_ERROR} {name}')
+    elif distributor.get('successfully'):
         return redirect('distributors')
-    return redirect_to_error_page(request)
+    return redirect_to_error_page(request, UNKNOWN_ERROR)
 
 
 @login_required
