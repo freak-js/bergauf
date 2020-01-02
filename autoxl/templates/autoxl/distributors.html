@@ -12,13 +12,13 @@
 
     <!-- FORMS -->
 
-    <form action="/change_distributor/" method="post" id="change_form">
+    <form action="/change_distributor_form/" method="POST" id="change_form">
 
         {% csrf_token %}
 
     </form>
 
-    <form action="/delete_distributor/" method="post" id="delete_form">
+    <form action="/delete_distributor/" method="POST" id="delete_form">
 
         {% csrf_token %}
 
@@ -100,9 +100,9 @@
 
                             <td>{{ distributor.telephone_number }}</td>
 
-                            <td><button value="{{ distributor.pk }}" name="id_editable_distributor" class="button-change" form="change_form" title="Изменить"><i class="fas fa-edit"></i></button></td>
+                            <td><button value="{{ distributor.pk }}" name="distributor_id" class="button-change" form="change_form" title="Изменить"><i class="fas fa-edit"></i></button></td>
 
-                            <td><button value="{{ distributor.pk }}" name="id_delete_distributor" class="button-delete" form="delete_form" title="Удалить"><i class="fas fa-trash"></i></button></td>
+                            <td><button value="{{ distributor.pk }}" name="distributor_id" class="button-delete" form="delete_form" title="Удалить"><i class="fas fa-trash"></i></button></td>
 
                         </tr>
 

@@ -12,16 +12,29 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 """
 
 
-def redirect_to_error_page(request: HttpResponse, context: str = '') -> HttpResponse:
-    """Функция редиректа на страницу уведомления об ошибках
+def redirect_to_error_page(request=None, context='') -> HttpResponse:
+    """Функция редиректа на страницу уведомления об ошибках.
     """
-    return render(request, 'autoxl/notice.html', {'context': f'Произошла ошибка {context}'})
+    return render(request, 'autoxl/notice.html', {'context': f'{context}'})
+
+
+def validate_id(raw_id: str) -> Union[bool, int]:
+    """Функция валидации id, взвращает int в случае успешного прохождения
+    валидации, или False в ином другом.
+    """
+    try:
+        id = int(raw_id)
+    except Exception:
+        return False
+    if id < 1:
+        return False
+    return id
 
 
 def get_product_mass(nomenclature: str) -> Union[int, bool]:
     """Функция получения массы продукта из номенклатуры продукта на основе
     регулярного выражения, работает для варинтов с 'к', 'кг', 'л' идущими
-    после искомого числового значения
+    после искомого числового значения.
     """
     pattern = r'([1-9][0-9]?)[\sкл][\sкгл][кг]?'
     if result := re.findall(pattern, nomenclature):
@@ -69,7 +82,7 @@ def validate_cell_value(cell_a, cell_c) -> dict:
     Проверяет возможность получения массы продукта из номенклатуры,
     валидирует значение тоннажа и возможность выполнения операции приведения к килограммам,
     проверяет возможность выполнения операции получения колчества единиц проданного
-    продукта и отсутсвия остатка при делении (остаток означает ошибку при заполнении ячейки)
+    продукта и отсутсвия остатка при делении (остаток означает ошибку при заполнении ячейки).
     """
     if not get_product_mass(cell_a.value):
         return {'error': [cell_a.row, cell_a.value, cell_a.coordinate, PRODUCT_MASS_VALIDATION_ERROR]}
@@ -85,7 +98,7 @@ def validate_cell_value(cell_a, cell_c) -> dict:
 def get_case(request: HttpResponse):
     """Функция - парсер сценариев, на основе анализа полученных данных выбранных пользователем
     на странице welcome формирует правильный варинат присвоения класса для извлечения и обработки
-    данных полученных из файла/файлов формата .xlsx
+    данных полученных из файла/файлов формата .xlsx.
     """
     post = request.POST
     file1: InMemoryUploadedFile = request.FILES.get('file_1')
