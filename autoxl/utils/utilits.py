@@ -95,7 +95,7 @@ def validate_cell_value(cell_a, cell_c) -> dict:
     return {'validate': True}
 
 
-def get_case(request: HttpResponse):
+def get_report_file(request: HttpResponse):
     """Функция - парсер сценариев, на основе анализа полученных данных выбранных пользователем
     на странице welcome формирует правильный варинат присвоения класса для извлечения и обработки
     данных полученных из файла/файлов формата .xlsx.
