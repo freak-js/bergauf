@@ -1,5 +1,6 @@
 import openpyxl
 from . import utilits
+from .constants import *
 from .error_messages import *
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl import Workbook
@@ -79,7 +80,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         super().__init__(file, bonus_count)
         self.report_file: Workbook = openpyxl.Workbook()
         self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
-        self.cabinet_007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
+        self.cabinet007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
 
     def get_cabinet_report(self) -> None:
         iteration: int = 1
@@ -92,17 +93,17 @@ class BaseBugBonus(BaseOneFileCabinet):
             for manager_data in manager[2]:
                 total_tons_for_this_manager += self.get_bonus_sum(manager_data)
 
-            self.cabinet_007_report[f'B{iteration}'] = total_tons_for_this_manager / 200
+            self.cabinet007_report[f'B{iteration}'] = total_tons_for_this_manager / DUMMY_BONUS_PER_TON
             iteration += 2
 
     def set_telephone_and_name_in_cabinet_report(self, iteration: int, manager: list) -> bool:
         if telephone_number := manager[0]:
-            self.cabinet_007_report[f'A{iteration}'] = telephone_number
+            self.cabinet007_report[f'A{iteration}'] = telephone_number
             iteration += 1
             manager_name = manager[1]
-            self.cabinet_007_report[f'A{iteration}'] = manager_name
+            self.cabinet007_report[f'A{iteration}'] = manager_name
             iteration += 1
-            self.cabinet_007_report[f'A{iteration}'] = '00208'
+            self.cabinet007_report[f'A{iteration}'] = '00208'
             return True
         return False
 
@@ -110,7 +111,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         nomenclature = manager_data[0]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * 1000 / product_mass
+        bags_count = tons * COUNT_KGS_IN_TON / product_mass
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
 
@@ -167,7 +168,7 @@ class BaseBugBonus(BaseOneFileCabinet):
         nomenclature_code = manager_data[1]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * 1000 / product_mass
+        bags_count = tons * COUNT_KGS_IN_TON / product_mass
         bonus_count = self.bonus_count
         bonus_sum = bags_count * bonus_count
         return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
