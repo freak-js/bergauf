@@ -97,7 +97,6 @@ def get_report(request):
     report.get_cabinet_report()
     response = HttpResponse(
         save_virtual_workbook(report.report_file),
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=report.xlsx'
     return response

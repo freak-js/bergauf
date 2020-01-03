@@ -129,8 +129,6 @@ def get_report_file(request: HttpResponse):
                             pass
                         if post['action_checkbox'] == 'on':
                             pass
-            else:
-                redirect_to_error_page(request, SALES_UNITS_ERROR)
 
         if post['report_format_selectbox'] == '2':
             pass
