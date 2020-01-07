@@ -105,18 +105,18 @@ def get_report_file(request: HttpResponse):
     file2: InMemoryUploadedFile = request.FILES.get('file_2')
     bonus_count = int(post['bonus_count_input'])
 
-    if post['variant_compensation_selectbox'] == '1':
+    if post['variant_compensation_selectbox'] == '1': # Способ компенсации: Кабинет 007
 
-        if post['report_format_selectbox'] == '1':
+        if post['report_format_selectbox'] == '1': # Формат отчета: Отчет кабинета 007
 
-            if post['sales_units_selectbox'] == '1':
+            if post['sales_units_selectbox'] == '1': # Продажи, единицы: Тонны
 
-                if post['bonus_type_selectbox'] == '1':
+                if post['bonus_type_selectbox'] == '1': # Тип бонуса: Бонус за мешок
                     return CaseCabinetTonsBugBonus(file1, bonus_count)
 
-                if post['bonus_type_selectbox'] == '2':
+                if post['bonus_type_selectbox'] == '2': # Тип бонуса: Фиксированный бонус
 
-                    if post['fixed_bonus_selectbox'] == '1':
+                    if post['fixed_bonus_selectbox'] == '1': # Фиксированный бонус с: Палетты
 
                         if post.get('action_checkbox'):
                             product_count_input = int(post['product_count_input'])
@@ -125,7 +125,7 @@ def get_report_file(request: HttpResponse):
                             product_count_input = int(post['product_count_input'])
                             return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, False)
 
-                    if post['fixed_bonus_selectbox'] == '2':
+                    if post['fixed_bonus_selectbox'] == '2': # Фиксированный бонус с: Мешка
 
                         if post.get('action_checkbox'):
                             product_count_input = int(post['product_count_input'])
@@ -134,7 +134,7 @@ def get_report_file(request: HttpResponse):
                             product_count_input = int(post['product_count_input'])
                             return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, False)
 
-                    if post['fixed_bonus_selectbox'] == '3':
+                    if post['fixed_bonus_selectbox'] == '3': # Фиксированный бонус с: Тонны
 
                         if post.get('action_checkbox'):
                             product_count_input = int(post['product_count_input'])
@@ -143,11 +143,11 @@ def get_report_file(request: HttpResponse):
                             product_count_input = int(post['product_count_input'])
                             return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, False)
 
-        if post['report_format_selectbox'] == '2':
+        if post['report_format_selectbox'] == '2': # Формат отчета: Отчет с менеджерами
             pass
 
-        if post['report_format_selectbox'] == '3':
+        if post['report_format_selectbox'] == '3': # Формат отчета: Отчет без менеджеров
             pass
 
-    else:
+    else: # Способ компенсации: Карты
         pass
