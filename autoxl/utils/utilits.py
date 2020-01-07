@@ -3,7 +3,8 @@ from .error_messages import *
 from typing import Union
 import re
 from . import constants
-from .cases import CaseCabinetTonsBugBonus, CaseCabinetTonsFixedBonusPalette, CaseCabinetTonsFixedBonusBugs
+from .cases import (CaseCabinetTonsBugBonus, CaseCabinetTonsFixedBonusPalette, CaseCabinetTonsFixedBonusBugs,
+                    CaseCabinetTonsFixedBonusTons)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 """
@@ -107,6 +108,7 @@ def get_report_file(request: HttpResponse):
     if post['variant_compensation_selectbox'] == '1':
 
         if post['report_format_selectbox'] == '1':
+
             if post['sales_units_selectbox'] == '1':
 
                 if post['bonus_type_selectbox'] == '1':
@@ -133,10 +135,13 @@ def get_report_file(request: HttpResponse):
                             return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, False)
 
                     if post['fixed_bonus_selectbox'] == '3':
-                        if post['action_checkbox'] == '':
-                            pass
-                        if post['action_checkbox'] == 'on':
-                            pass
+
+                        if post.get('action_checkbox'):
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, True)
+                        else:
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, False)
 
         if post['report_format_selectbox'] == '2':
             pass

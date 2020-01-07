@@ -5,6 +5,7 @@ from .error_messages import *
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl import Workbook
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from typing import Union
 
 """
 ГЕНАРТОРЫ ДАННЫХ
@@ -172,7 +173,7 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         product_mass = utilits.get_product_mass(nomenclature)
         bags_count = tons * COUNT_KGS_IN_TON / product_mass
         bonus_count = self.bonus_count
-        bonus_sum = bags_count * bonus_count
+        bonus_sum = self.get_bonus_sum(manager_data)
         return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
                 'tons': tons, 'product_mass': product_mass, 'bags_count': bags_count,
                 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
@@ -199,21 +200,41 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
         else:
             return self.bonus_count
 
-    def get_calculations_for_manager_data(self, manager_data: list) -> dict:
-        nomenclature = manager_data[0]
-        nomenclature_code = manager_data[1]
-        tons = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
-        bonus_count = self.bonus_count
-        bonus_sum = self.get_bonus_sum(manager_data)
-        return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
-                'tons': tons, 'product_mass': product_mass, 'bags_count': bags_count,
-                'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
-
 
 class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус, мешки"""
+
     def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
         super().__init__(file, bonus_count)
         self.product_count_input = product_count_input
         self.action = action
+
+    def get_bonus_sum(self, manager_data: list) -> int:
+        nomenclature = manager_data[0]
+        tons = float(manager_data[2])
+        product_mass = utilits.get_product_mass(nomenclature)
+        bags_count = int(tons * COUNT_KGS_IN_TON / product_mass)
+        if bags_count < self.product_count_input:
+            return 0
+        if self.action:
+            return bags_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+
+class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус, тонны"""
+
+    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+        super().__init__(file, bonus_count)
+        self.product_count_input = product_count_input
+        self.action = action
+
+    def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
+        tons = float(manager_data[2])
+        if tons < self.product_count_input:
+            return 0
+        if self.action:
+            return tons // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
