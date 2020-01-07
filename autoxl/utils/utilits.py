@@ -3,9 +3,8 @@ from .error_messages import *
 from typing import Union
 import re
 from . import constants
-from .cases import CaseCabinetTonsBagbonus
+from .cases import CaseCabinetTonsBugBonus, CaseCabinetTonsFixedBonusPalette, CaseCabinetTonsFixedBonusBugs
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
 
 """
 Модуль вспомогательных утилит
@@ -103,6 +102,7 @@ def get_report_file(request: HttpResponse):
     post = request.POST
     file1: InMemoryUploadedFile = request.FILES.get('file_1')
     file2: InMemoryUploadedFile = request.FILES.get('file_2')
+    bonus_count = int(post['bonus_count_input'])
 
     if post['variant_compensation_selectbox'] == '1':
 
@@ -110,20 +110,28 @@ def get_report_file(request: HttpResponse):
             if post['sales_units_selectbox'] == '1':
 
                 if post['bonus_type_selectbox'] == '1':
-                    bonus_count = int(post['bonus_count_input'])
-                    return CaseCabinetTonsBagbonus(file1, bonus_count)
+                    return CaseCabinetTonsBugBonus(file1, bonus_count)
 
                 if post['bonus_type_selectbox'] == '2':
+
                     if post['fixed_bonus_selectbox'] == '1':
-                        if post['action_checkbox'] == '':
-                            pass
-                        if post['action_checkbox'] == 'on':
-                            pass
+
+                        if post.get('action_checkbox'):
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, True)
+                        else:
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, False)
+
                     if post['fixed_bonus_selectbox'] == '2':
-                        if post['action_checkbox'] == '':
-                            pass
-                        if post['action_checkbox'] == 'on':
-                            pass
+
+                        if post.get('action_checkbox'):
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, True)
+                        else:
+                            product_count_input = int(post['product_count_input'])
+                            return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, False)
+
                     if post['fixed_bonus_selectbox'] == '3':
                         if post['action_checkbox'] == '':
                             pass
@@ -136,5 +144,5 @@ def get_report_file(request: HttpResponse):
         if post['report_format_selectbox'] == '3':
             pass
 
-    if post['variant_compensation_selectbox'] == '2':
+    else:
         pass

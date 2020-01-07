@@ -11,7 +11,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 """
 
 
-class BaseOneFileCabinet:
+class DataParserOneFileCabinet:
+    """Парсер данных для одного файла отчет кабинет 007"""
 
     def __init__(self, file: InMemoryUploadedFile, bonus_count: int) -> None:
         self.bonus_count: int = bonus_count
@@ -74,7 +75,8 @@ class BaseOneFileCabinet:
 """
 
 
-class BaseBugBonus(BaseOneFileCabinet):
+class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
+    """Обработчик данных для кейса: кабинет 007, бонус за мешок"""
 
     def __init__(self, file: InMemoryUploadedFile, bonus_count: int) -> None:
         super().__init__(file, bonus_count)
@@ -85,15 +87,15 @@ class BaseBugBonus(BaseOneFileCabinet):
     def get_cabinet_report(self) -> None:
         iteration: int = 1
         for manager in self.managers_data:
-            total_tons_for_this_manager: int = 0
+            total_bonus_for_this_manager: int = 0
             if not self.set_telephone_and_name_in_cabinet_report(iteration, manager):
                 break
             iteration += 2
 
             for manager_data in manager[2]:
-                total_tons_for_this_manager += self.get_bonus_sum(manager_data)
+                total_bonus_for_this_manager += self.get_bonus_sum(manager_data)
 
-            self.cabinet007_report[f'B{iteration}'] = total_tons_for_this_manager / DUMMY_BONUS_PER_TON
+            self.cabinet007_report[f'B{iteration}'] = total_bonus_for_this_manager / DUMMY_BONUS_PER_TON
             iteration += 2
 
     def set_telephone_and_name_in_cabinet_report(self, iteration: int, manager: list) -> bool:
@@ -176,10 +178,42 @@ class BaseBugBonus(BaseOneFileCabinet):
                 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
 
 
-'''
-Кейсы для utils
-'''
+class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус, палетты"""
+
+    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+        super().__init__(file, bonus_count)
+        self.product_count_input = product_count_input
+        self.action = action
+
+    def get_bonus_sum(self, manager_data: list) -> int:
+        nomenclature = manager_data[0]
+        tons = float(manager_data[2])
+        product_mass = utilits.get_product_mass(nomenclature)
+        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
+        if palette_count < self.product_count_input:
+            return 0
+        if self.action:
+            return palette_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+    def get_calculations_for_manager_data(self, manager_data: list) -> dict:
+        nomenclature = manager_data[0]
+        nomenclature_code = manager_data[1]
+        tons = float(manager_data[2])
+        product_mass = utilits.get_product_mass(nomenclature)
+        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        bonus_count = self.bonus_count
+        bonus_sum = self.get_bonus_sum(manager_data)
+        return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
+                'tons': tons, 'product_mass': product_mass, 'bags_count': bags_count,
+                'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
 
 
-class CaseCabinetTonsBagbonus(BaseBugBonus):
-    pass
+class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
+    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+        super().__init__(file, bonus_count)
+        self.product_count_input = product_count_input
+        self.action = action
