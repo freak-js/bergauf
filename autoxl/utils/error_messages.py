@@ -18,6 +18,8 @@ MASS_DIVISION_VALIDATION_ERROR = 'Результатом операции рас
 
 ID_VALIDATE_ERROR = 'Ошибка валидации ID!'
 
+TELEPHONE_NUMBER_SEARCH_ERROR = 'Ошибка поиска совпадений телефонного номера с именем менеджера и внешним ID!'
+
 # VALUE ERRORS
 
 CELL_VALUE_ERROR = 'Пустое значение ячейки!'

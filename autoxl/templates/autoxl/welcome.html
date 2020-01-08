@@ -450,18 +450,18 @@
 
             comparison = list.includes(text_input.value);
 
-            if(selectbox_compensation.options.selectedIndex == 0 && (comparison || text_input.value === '')){
+            if(selectbox_compensation.options.selectedIndex == 0 && selectbox_order_format.options.selectedIndex != 1 && (comparison || text_input.value === '')){
 
                 return true;
 
-            } else if(selectbox_compensation.options.selectedIndex == 0 && comparison == 'false' && text_input.value != ''){
+            } else if(selectbox_compensation.options.selectedIndex == 0 && selectbox_order_format.options.selectedIndex != 1 && comparison == 'false' && text_input.value != ''){
 
                 text_input.value = '';
                 alert.innerHTML = 'Имя дистрибьютора не совпадает ни с одним из имен в базе данных! Учитывается регистр символов!'
                 alert.classList.add('alert-no-hidden');
                 return false;
 
-            } else if(selectbox_compensation.options.selectedIndex == 1 && (comparison == false || text_input.value === '')){
+            } else if((selectbox_compensation.options.selectedIndex == 1 || selectbox_order_format.options.selectedIndex == 1) && (comparison == false || text_input.value === '')){
 
                 if(comparison == false && text_input.value != ''){
 
@@ -480,7 +480,7 @@
 
                 }
 
-            } else if(selectbox_compensation.options.selectedIndex == 1 && comparison){
+            } else if((selectbox_compensation.options.selectedIndex == 1 || selectbox_order_format.options.selectedIndex == 1) && comparison){
 
                 return true
 
@@ -516,6 +516,10 @@
             let file_2 = document.getElementById('file_2');
 
             if(selectbox_order_format.options.selectedIndex != 1){
+
+                return true
+
+            } else if(file_2.value != ''){
 
                 return true
 
