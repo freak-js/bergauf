@@ -371,22 +371,23 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         return False
 
     def get_work_report(self) -> None:
-        self.set_work_report_title()
         iteration: int = 1
         total_bags_count, total_bonus_sum = 0, 0
+        self.set_work_report_title()
         for manager in self.managers_data:
             if not self.set_telephone_and_name_in_work_report(iteration, manager):
                 break
-            iteration += 3
+            iteration += 2
             for manager_data in manager[2]:
+                iteration += 1
                 calculation = self.get_calculations_for_manager_data(manager_data)
                 total_bags_count += calculation['bags_count']
                 total_bonus_sum += calculation['bonus_sum']
                 self.set_work_report_cell_value(iteration, calculation)
-                iteration += 1
         self.summarize(iteration, total_bags_count, total_bonus_sum)
 
     def summarize(self, iteration: int, total_bags_count: int, total_bonus_sum: int) -> None:
+        iteration += 1
         self.work_report[f'A{iteration}'] = 'Итого:'
         self.work_report[f'D{iteration}'] = total_bags_count
         self.work_report[f'F{iteration}'] = total_bonus_sum
