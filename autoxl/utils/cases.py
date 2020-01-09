@@ -75,7 +75,7 @@ class DataParserOneFileCabinet:
 class DataParserTwoFileCabinet:
     """Парсер данных для двух файлов, отчет кабинет 007"""
 
-    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str, bugs: bool) -> None:
+    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str, sales_units: str) -> None:
         self.bonus_count: int = bonus_count
         self.work_book_file1 = openpyxl.load_workbook(file1)
         self.work_sheet_file1 = self.work_book_file1.get_sheet_by_name(self.work_book_file1.get_sheet_names()[0])
@@ -85,7 +85,7 @@ class DataParserTwoFileCabinet:
         self.data: dict = self.get_managers_data()
         self.managers_data: list = self.data.get('managers_data')
         self.errors: list = self.data.get('errors')
-        self.bugs = bugs
+        self.sales_units = sales_units
 
     def get_file1_data(self) -> list:
         iteration: int = 0
@@ -127,7 +127,7 @@ class DataParserTwoFileCabinet:
         managers_data, manager, manager_data, errors = [], [], [], []
         for data in file1_data:
             manager_name = data.get('manager_name')
-            if phone_number := utilits.search_telephone_number(external_id, manager_name.value, file2_data):
+            if phone_number := utilits.search_phone_number(external_id, manager_name.value, file2_data):
 
                 if utilits.validate_phone_number(phone_number):
                     manager.append(phone_number)
@@ -160,7 +160,6 @@ class DataParserTwoFileCabinet:
                     [manager_name.row, manager_name.value, manager_name.coordinate, TELEPHONE_NUMBER_SEARCH_ERROR])
                 continue
         managers_data.append([[]])
-        print(managers_data)
         return {'managers_data': managers_data, 'errors': errors}
 
 
@@ -340,8 +339,8 @@ class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
 class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
     """Обработчик данных для кейса: отчет с менеджерами, тонны, бонус за мешок"""
 
-    def __init__(self, file1, file2, bonus_count, distributor_name_input, bugs):
-        super().__init__(file1, file2, bonus_count, distributor_name_input, bugs)
+    def __init__(self, file1, file2, bonus_count, distributor_name_input, sales_units):
+        super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
         self.report_file: Workbook = openpyxl.Workbook()
         self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
         self.cabinet007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
@@ -421,19 +420,22 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         nomenclature = manager_data[0]
         tons = float(manager_data[1])
         product_mass = utilits.get_product_mass(nomenclature)
-        if self.bugs:
-            bags_count = tons
-        else:
+        if self.sales_units == 'tons':
             bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         bonus_count = self.bonus_count
         bonus_sum = self.get_bonus_sum(manager_data)
-        return {'nomenclature': nomenclature,'tons': tons, 'product_mass': product_mass,
-                'bags_count': bags_count,'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
+        return {'nomenclature': nomenclature, 'tons': tons, 'product_mass': product_mass,
+                'bags_count': bags_count, 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
 
     def get_bonus_sum(self, manager_data: list) -> float:
         nomenclature = manager_data[0]
         tons = float(manager_data[1])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
