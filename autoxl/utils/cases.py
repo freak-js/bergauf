@@ -170,7 +170,7 @@ class DataParserTwoFileCabinet:
 
 
 class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
-    """Обработчик данных для кейса: кабинет 007, тонны, бонус за мешок"""
+    """Обработчик данных для кейса: кабинет 007, бонус за мешок"""
 
     def __init__(self, file, bonus_count: int) -> None:
         super().__init__(file, bonus_count)
@@ -273,12 +273,12 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
 
 
 class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
-    """Обработчик данных для кейса: кабинет 007, тонны, фиксированный бонус, палетты"""
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус с палетты"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file, bonus_count)
         self.product_count_input = product_count_input
-        self.action = action
+        self.action = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> int:
         nomenclature = manager_data[0]
@@ -295,12 +295,12 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
 
 
 class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
-    """Обработчик данных для кейса: кабинет 007, тонны, фиксированный бонус, мешки"""
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус с мешка"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file, bonus_count)
         self.product_count_input = product_count_input
-        self.action = action
+        self.action = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> int:
         nomenclature = manager_data[0]
@@ -316,12 +316,12 @@ class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
 
 
 class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
-    """Обработчик данных для кейса: кабинет 007, тонны, фиксированный бонус, тонны"""
+    """Обработчик данных для кейса: кабинет 007, фиксированный бонус с тонны"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action: bool) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file, bonus_count)
         self.product_count_input = product_count_input
-        self.action = action
+        self.action = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
         tons = float(manager_data[2])
@@ -337,7 +337,7 @@ class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
 
 
 class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
-    """Обработчик данных для кейса: отчет с менеджерами, тонны, бонус за мешок"""
+    """Обработчик данных для кейса: отчет с менеджерами, бонус за мешок"""
 
     def __init__(self, file1, file2, bonus_count, distributor_name_input, sales_units):
         super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
@@ -439,3 +439,67 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
             bags_count = tons
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
+
+
+class CaseManagersTonsFixedBonusPalette(CaseManagersTonsBugBonus):
+    """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с палетты"""
+
+    def __init__(self, file1, file2, bonus_count, distributor_name_input,
+                 sales_units, product_count_input, action_checkbox):
+        super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
+        self.product_count_input = product_count_input
+        self.action = action_checkbox
+
+    def get_bonus_sum(self, manager_data: list) -> int:
+        nomenclature = manager_data[0]
+        tons = float(manager_data[1])
+        product_mass = utilits.get_product_mass(nomenclature)
+        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
+        if palette_count < self.product_count_input:
+            return 0
+        if self.action:
+            return palette_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+
+class CaseManagersTonsFixedBonusBugs(CaseManagersTonsBugBonus):
+    """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с мешка"""
+
+    def __init__(self, file1, file2, bonus_count, distributor_name_input,
+                 sales_units, product_count_input, action_checkbox):
+        super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
+        self.product_count_input = product_count_input
+        self.action = action_checkbox
+
+    def get_bonus_sum(self, manager_data: list) -> int:
+        nomenclature = manager_data[0]
+        tons = float(manager_data[1])
+        product_mass = utilits.get_product_mass(nomenclature)
+        bags_count = int(tons * COUNT_KGS_IN_TON / product_mass)
+        if bags_count < self.product_count_input:
+            return 0
+        if self.action:
+            return bags_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+
+class CaseManagersTonsFixedBonusTons(CaseManagersTonsBugBonus):
+    """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с тонны"""
+
+    def __init__(self, file1, file2, bonus_count, distributor_name_input,
+                 sales_units, product_count_input, action_checkbox):
+        super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
+        self.product_count_input = product_count_input
+        self.action = action_checkbox
+
+    def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
+        tons = float(manager_data[1])
+        if tons < self.product_count_input:
+            return 0
+        if self.action:
+            return tons // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count

@@ -4,7 +4,8 @@ from typing import Union
 import re
 from . import constants
 from .cases import (CaseCabinetTonsBugBonus, CaseCabinetTonsFixedBonusPalette, CaseCabinetTonsFixedBonusBugs,
-                    CaseCabinetTonsFixedBonusTons, CaseManagersTonsBugBonus)
+                    CaseCabinetTonsFixedBonusTons, CaseManagersTonsBugBonus, CaseManagersTonsFixedBonusPalette,
+                    CaseManagersTonsFixedBonusBugs, CaseManagersTonsFixedBonusTons)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 """
@@ -149,7 +150,24 @@ def get_report_file(request: HttpResponse):
                 return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input, sales_units)
 
             if post['bonus_type_selectbox'] == '2':  # Тип бонуса: Фиксированный бонус
-                pass
+
+                if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
+                    distributor_name_input = post['distributor_name_input']
+                    product_count_input = int(post['product_count_input'])
+                    return CaseManagersTonsFixedBonusPalette(file1, file2, bonus_count, distributor_name_input,
+                                                             sales_units, product_count_input, action_checkbox)
+
+                if post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
+                    distributor_name_input = post['distributor_name_input']
+                    product_count_input = int(post['product_count_input'])
+                    return CaseManagersTonsFixedBonusBugs(file1, file2, bonus_count, distributor_name_input,
+                                                          sales_units, product_count_input, action_checkbox)
+
+                if post['fixed_bonus_selectbox'] == '3':  # Фиксированный бонус с: Тонны
+                    distributor_name_input = post['distributor_name_input']
+                    product_count_input = int(post['product_count_input'])
+                    return CaseManagersTonsFixedBonusTons(file1, file2, bonus_count, distributor_name_input,
+                                                          sales_units, product_count_input, action_checkbox)
 
         if post['report_format_selectbox'] == '3':  # Формат отчета: Отчет без менеджеров
             pass
