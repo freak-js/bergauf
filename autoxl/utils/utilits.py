@@ -127,21 +127,24 @@ def get_report_file(request: HttpResponse):
         if post['report_format_selectbox'] == '1':  # Формат отчета: Отчет кабинета 007
 
             if post['bonus_type_selectbox'] == '1':  # Тип бонуса: Бонус за мешок
-                return CaseCabinetTonsBugBonus(file1, bonus_count)
+                return CaseCabinetTonsBugBonus(file1, bonus_count, sales_units)
 
             if post['bonus_type_selectbox'] == '2':  # Тип бонуса: Фиксированный бонус
 
                 if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, action_checkbox)
+                    return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, action_checkbox,
+                                                            sales_units)
 
                 if post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, action_checkbox)
+                    return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, action_checkbox,
+                                                         sales_units)
 
                 if post['fixed_bonus_selectbox'] == '3':  # Фиксированный бонус с: Тонны
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, action_checkbox)
+                    return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, action_checkbox,
+                                                         sales_units)
 
         if post['report_format_selectbox'] == '2':  # Формат отчета: Отчет с менеджерами
 

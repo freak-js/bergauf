@@ -16,13 +16,14 @@ from ..models import Distributor
 class DataParserOneFileCabinet:
     """Парсер данных для одного файла, отчет кабинет 007"""
 
-    def __init__(self, file, bonus_count: int) -> None:
+    def __init__(self, file, bonus_count: int, sales_units: str) -> None:
         self.bonus_count: int = bonus_count
         self.work_book: Workbook = openpyxl.load_workbook(file)
         self.work_sheet: Worksheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
         self.data: dict = self.get_managers_data()
         self.managers_data: list = self.data.get('managers_data')
         self.errors: list = self.data.get('errors')
+        self.sales_units = sales_units
 
     def get_managers_data(self) -> dict:
         iteration, free_cell = 0, 0
@@ -172,8 +173,8 @@ class DataParserTwoFileCabinet:
 class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
     """Обработчик данных для кейса: кабинет 007, бонус за мешок"""
 
-    def __init__(self, file, bonus_count: int) -> None:
-        super().__init__(file, bonus_count)
+    def __init__(self, file, bonus_count: int, sales_units) -> None:
+        super().__init__(file, bonus_count, sales_units)
         self.report_file: Workbook = openpyxl.Workbook()
         self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
         self.cabinet007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
@@ -207,7 +208,10 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         nomenclature = manager_data[0]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
 
@@ -264,7 +268,10 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         nomenclature_code = manager_data[1]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         bonus_count = self.bonus_count
         bonus_sum = self.get_bonus_sum(manager_data)
         return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
@@ -275,8 +282,8 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
 class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с палетты"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
-        super().__init__(file, bonus_count)
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+        super().__init__(file, bonus_count, sales_units)
         self.product_count_input = product_count_input
         self.action = action_checkbox
 
@@ -284,7 +291,10 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
         nomenclature = manager_data[0]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
         if palette_count < self.product_count_input:
             return 0
@@ -297,16 +307,19 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
 class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с мешка"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
-        super().__init__(file, bonus_count)
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+        super().__init__(file, bonus_count, sales_units)
         self.product_count_input = product_count_input
         self.action = action_checkbox
 
-    def get_bonus_sum(self, manager_data: list) -> int:
+    def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
         nomenclature = manager_data[0]
         tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = int(tons * COUNT_KGS_IN_TON / product_mass)
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         if bags_count < self.product_count_input:
             return 0
         if self.action:
@@ -318,17 +331,23 @@ class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
 class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с тонны"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool) -> None:
-        super().__init__(file, bonus_count)
+    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+        super().__init__(file, bonus_count, sales_units)
         self.product_count_input = product_count_input
         self.action = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
+        nomenclature = manager_data[0]
         tons = float(manager_data[2])
-        if tons < self.product_count_input:
+        product_mass = utilits.get_product_mass(nomenclature)
+        if self.sales_units == 'tons':
+            bags_count = tons
+        else:
+            bags_count = tons * product_mass
+        if bags_count < self.product_count_input:
             return 0
         if self.action:
-            return tons // self.product_count_input * self.bonus_count
+            return bags_count // self.product_count_input * self.bonus_count
         else:
             return self.bonus_count
 
@@ -452,9 +471,12 @@ class CaseManagersTonsFixedBonusPalette(CaseManagersTonsBugBonus):
 
     def get_bonus_sum(self, manager_data: list) -> int:
         nomenclature = manager_data[0]
-        tons = float(manager_data[1])
+        tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
         if palette_count < self.product_count_input:
             return 0
@@ -473,11 +495,14 @@ class CaseManagersTonsFixedBonusBugs(CaseManagersTonsBugBonus):
         self.product_count_input = product_count_input
         self.action = action_checkbox
 
-    def get_bonus_sum(self, manager_data: list) -> int:
+    def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
         nomenclature = manager_data[0]
-        tons = float(manager_data[1])
+        tons = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
-        bags_count = int(tons * COUNT_KGS_IN_TON / product_mass)
+        if self.sales_units == 'tons':
+            bags_count = tons * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = tons
         if bags_count < self.product_count_input:
             return 0
         if self.action:
@@ -496,10 +521,16 @@ class CaseManagersTonsFixedBonusTons(CaseManagersTonsBugBonus):
         self.action = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
-        tons = float(manager_data[1])
-        if tons < self.product_count_input:
+        nomenclature = manager_data[0]
+        tons = float(manager_data[2])
+        product_mass = utilits.get_product_mass(nomenclature)
+        if self.sales_units == 'tons':
+            bags_count = tons
+        else:
+            bags_count = tons * product_mass
+        if bags_count < self.product_count_input:
             return 0
         if self.action:
-            return tons // self.product_count_input * self.bonus_count
+            return bags_count // self.product_count_input * self.bonus_count
         else:
             return self.bonus_count
