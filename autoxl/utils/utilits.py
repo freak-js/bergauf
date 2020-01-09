@@ -152,7 +152,7 @@ def get_report_file(request: HttpResponse):
                 distributor_name_input = post['distributor_name_input']
                 return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input, sales_units)
 
-            if post['bonus_type_selectbox'] == '2':  # Тип бонуса: Фиксированный бонус
+            else:  # Тип бонуса: Фиксированный бонус
 
                 if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
                     distributor_name_input = post['distributor_name_input']
