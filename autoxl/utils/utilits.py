@@ -159,11 +159,15 @@ def get_report_file(request: HttpResponse):
 
         if post['report_format_selectbox'] == '2':  # Формат отчета: Отчет с менеджерами
 
-            if post['sales_units_selectbox'] == '1':  # Продажи, единицы: Тонны
-
                 if post['bonus_type_selectbox'] == '1':  # Тип бонуса: Бонус за мешок
-                    distributor_name_input = post['distributor_name_input']
-                    return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input)
+
+                    if post['sales_units_selectbox'] == '1':  # Продажи, единицы: Тонны
+                        distributor_name_input = post['distributor_name_input']
+                        return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input, bugs=False)
+
+                    if post['sales_units_selectbox'] == '2':  # Продажи, единицы: Мешки
+                        distributor_name_input = post['distributor_name_input']
+                        return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input, bugs=True)
 
                 if post['bonus_type_selectbox'] == '2':  # Тип бонуса: Фиксированный бонус
                     pass
