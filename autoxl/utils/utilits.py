@@ -3,9 +3,9 @@ from .error_messages import *
 from typing import Union
 import re
 from . import constants
-from .cases import (CaseCabinetTonsBugBonus, CaseCabinetTonsFixedBonusPalette, CaseCabinetTonsFixedBonusBugs,
-                    CaseCabinetTonsFixedBonusTons, CaseManagersTonsBugBonus, CaseManagersTonsFixedBonusPalette,
-                    CaseManagersTonsFixedBonusBugs, CaseManagersTonsFixedBonusTons)
+from .cases import (CaseCabinetBugBonus, CaseCabinetFixedBonusPalette, CaseCabinetFixedBonusBugs,
+                    CaseCabinetFixedBonusTons, CaseManagersBugBonus, CaseManagersFixedBonusPalette,
+                    CaseManagersFixedBonusBugs, CaseManagersFixedBonusTons, CaseNotManagersBugBonus)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 """
@@ -78,8 +78,8 @@ def validate_division(nomenclature: str, tons: Union[int, float]) -> bool:
 
 def validate_cell_value(cell_nomenclature, cell_mass) -> dict:
     """Валидирование входных данных из ячеек, где:
-    cell_a - ячейка с номенклатурой
-    cell_c - ячейка с тоннажом продукции
+    cell_a - объект ячейки с номенклатурой
+    cell_c - объект ячейки с тоннажом продукции
     Проверяет возможность получения массы продукта из номенклатуры,
     валидирует значение тоннажа и возможность выполнения операции приведения к килограммам,
     проверяет возможность выполнения операции получения колчества единиц проданного
@@ -118,62 +118,75 @@ def get_report_file(request: HttpResponse):
     post = request.POST
     file1: InMemoryUploadedFile = request.FILES.get('file_1')
     file2: InMemoryUploadedFile = request.FILES.get('file_2')
-    bonus_count = int(post['bonus_count_input'])
-    sales_units = 'tons' if post['sales_units_selectbox'] == '1' else 'bugs'
-    action_checkbox = bool(post.get('action_checkbox'))
+    bonus_count: int = int(post['bonus_count_input'])
+    sales_units: str = 'tons' if post['sales_units_selectbox'] == '1' else 'bugs'
+    action_checkbox: bool = bool(post.get('action_checkbox'))
 
     if post['variant_compensation_selectbox'] == '1':  # Способ компенсации: Кабинет 007
 
         if post['report_format_selectbox'] == '1':  # Формат отчета: Отчет кабинета 007
 
             if post['bonus_type_selectbox'] == '1':  # Тип бонуса: Бонус за мешок
-                return CaseCabinetTonsBugBonus(file1, bonus_count, sales_units)
+                return CaseCabinetBugBonus(file1, bonus_count, sales_units)
 
-            if post['bonus_type_selectbox'] == '2':  # Тип бонуса: Фиксированный бонус
+            else:  # Тип бонуса: Фиксированный бонус
 
                 if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusPalette(file1, bonus_count, product_count_input, action_checkbox,
-                                                            sales_units)
+                    return CaseCabinetFixedBonusPalette(file1, bonus_count, product_count_input,
+                                                        action_checkbox, sales_units)
 
-                if post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
+                elif post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusBugs(file1, bonus_count, product_count_input, action_checkbox,
-                                                         sales_units)
+                    return CaseCabinetFixedBonusBugs(file1, bonus_count, product_count_input,
+                                                     action_checkbox, sales_units)
 
-                if post['fixed_bonus_selectbox'] == '3':  # Фиксированный бонус с: Тонны
+                else:  # Фиксированный бонус с: Тонны
                     product_count_input = int(post['product_count_input'])
-                    return CaseCabinetTonsFixedBonusTons(file1, bonus_count, product_count_input, action_checkbox,
-                                                         sales_units)
+                    return CaseCabinetFixedBonusTons(file1, bonus_count, product_count_input,
+                                                     action_checkbox, sales_units)
 
-        if post['report_format_selectbox'] == '2':  # Формат отчета: Отчет с менеджерами
+        elif post['report_format_selectbox'] == '2':  # Формат отчета: Отчет с менеджерами
 
             if post['bonus_type_selectbox'] == '1':  # Тип бонуса: Бонус за мешок
                 distributor_name_input = post['distributor_name_input']
-                return CaseManagersTonsBugBonus(file1, file2, bonus_count, distributor_name_input, sales_units)
+                return CaseManagersBugBonus(file1, file2, bonus_count, distributor_name_input, sales_units)
 
             else:  # Тип бонуса: Фиксированный бонус
 
                 if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
                     distributor_name_input = post['distributor_name_input']
                     product_count_input = int(post['product_count_input'])
-                    return CaseManagersTonsFixedBonusPalette(file1, file2, bonus_count, distributor_name_input,
-                                                             sales_units, product_count_input, action_checkbox)
+                    return CaseManagersFixedBonusPalette(file1, file2, bonus_count, distributor_name_input,
+                                                         sales_units, product_count_input, action_checkbox)
 
-                if post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
+                elif post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
                     distributor_name_input = post['distributor_name_input']
                     product_count_input = int(post['product_count_input'])
-                    return CaseManagersTonsFixedBonusBugs(file1, file2, bonus_count, distributor_name_input,
-                                                          sales_units, product_count_input, action_checkbox)
+                    return CaseManagersFixedBonusBugs(file1, file2, bonus_count, distributor_name_input,
+                                                      sales_units, product_count_input, action_checkbox)
 
-                if post['fixed_bonus_selectbox'] == '3':  # Фиксированный бонус с: Тонны
+                else:  # Фиксированный бонус с: Тонны
                     distributor_name_input = post['distributor_name_input']
                     product_count_input = int(post['product_count_input'])
-                    return CaseManagersTonsFixedBonusTons(file1, file2, bonus_count, distributor_name_input,
-                                                          sales_units, product_count_input, action_checkbox)
+                    return CaseManagersFixedBonusTons(file1, file2, bonus_count, distributor_name_input,
+                                                      sales_units, product_count_input, action_checkbox)
 
-        if post['report_format_selectbox'] == '3':  # Формат отчета: Отчет без менеджеров
-            pass
+        else:  # Формат отчета: Отчет без менеджеров
+
+            if post['bonus_type_selectbox'] == '1':  # Тип бонуса: Бонус за мешок
+                return CaseNotManagersBugBonus(file1, bonus_count, sales_units)
+
+            else:  # Тип бонуса: Фиксированный бонус
+
+                if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
+                    pass
+
+                elif post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
+                    pass
+
+                else:  # Фиксированный бонус с: Тонны
+                    pass
 
     else:  # Способ компенсации: Карты
         pass

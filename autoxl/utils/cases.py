@@ -18,12 +18,12 @@ class DataParserOneFileCabinet:
 
     def __init__(self, file, bonus_count: int, sales_units: str) -> None:
         self.bonus_count: int = bonus_count
+        self.sales_units: str = sales_units
         self.work_book: Workbook = openpyxl.load_workbook(file)
         self.work_sheet: Worksheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
         self.data: dict = self.get_managers_data()
         self.managers_data: list = self.data.get('managers_data')
         self.errors: list = self.data.get('errors')
-        self.sales_units = sales_units
 
     def get_managers_data(self) -> dict:
         iteration, free_cell = 0, 0
@@ -78,6 +78,7 @@ class DataParserTwoFileCabinet:
 
     def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str, sales_units: str) -> None:
         self.bonus_count: int = bonus_count
+        self.sales_units: str = sales_units
         self.work_book_file1 = openpyxl.load_workbook(file1)
         self.work_sheet_file1 = self.work_book_file1.get_sheet_by_name(self.work_book_file1.get_sheet_names()[0])
         self.work_book_file2 = openpyxl.load_workbook(file2)
@@ -86,7 +87,6 @@ class DataParserTwoFileCabinet:
         self.data: dict = self.get_managers_data()
         self.managers_data: list = self.data.get('managers_data')
         self.errors: list = self.data.get('errors')
-        self.sales_units = sales_units
 
     def get_file1_data(self) -> list:
         iteration: int = 0
@@ -122,9 +122,9 @@ class DataParserTwoFileCabinet:
         return file2_data
 
     def get_managers_data(self) -> dict:
-        file1_data = self.get_file1_data()
-        file2_data = self.get_file2_data()
-        external_id = self.distributor.external_id
+        file1_data: list = self.get_file1_data()
+        file2_data: list = self.get_file2_data()
+        external_id: str = self.distributor.external_id
         managers_data, manager, manager_data, errors = [], [], [], []
         for data in file1_data:
             manager_name = data.get('manager_name')
@@ -164,16 +164,52 @@ class DataParserTwoFileCabinet:
         return {'managers_data': managers_data, 'errors': errors}
 
 
+class DataParserOneFileNotManagerCabinet:
+    """Парсер данных для одного файла, отчет без менеджеров
+
+       ЭТОТ КЛАСС РАБОТАЕТ ПО УПРОЩЕННОЙ СХЕМЕ ИЗВЛЕЧЕНИЯ ДАННЫХ!!!
+       СТРУКТУРА ДАННЫХ ПАРСЕРА И МЕТОДЫ ИХ ПОЛУЧЕНИЯ ОТЛИЧАЮТСЯ ОТ ПРЕДЫДУЩИХ КЛАССОВ-ПАРСЕРОВ!!!
+       НЕ НАСЛЕДОВАТЬСЯ ОТ ДАННОГО КЛАССА ПРЕДВАРИТЕЛЬНО НЕ УБЕДИВШИСЬ В ВАЛИДНОСТИ НАСЛЕДОВАНИЯ!!!
+    """
+
+    def __init__(self, file, bonus_count: int, sales_units: str) -> None:
+        self.bonus_count: int = bonus_count
+        self.sales_units: str = sales_units
+        self.work_book: Workbook = openpyxl.load_workbook(file)
+        self.work_sheet: Worksheet = self.work_book.get_sheet_by_name(self.work_book.get_sheet_names()[0])
+        self.data: dict = self.parse_data()
+        self.data_list: list = self.data.get('data_list')
+        self.errors: list = self.data.get('errors')
+
+    def parse_data(self) -> dict:
+        iteration: int = 0
+        data_list, errors = [], []
+        while True:
+            iteration += 1
+            nomenclature_cell = self.work_sheet[f'A{iteration}']
+            mass_cell = self.work_sheet[f'B{iteration}']
+
+            if not nomenclature_cell.value and not mass_cell.value:
+                break
+            elif valid_result := utilits.validate_cell_value(nomenclature_cell, mass_cell).get('errors'):
+                errors.append(valid_result)
+                continue
+            else:
+                data_list.append([nomenclature_cell.value, mass_cell.value])
+                continue
+        return {'data_list': data_list, 'errors': errors}
+
+
 """ОБРАБОТЧИКИ ДАННЫХ"""
 
 
 # ОБРАБОТЧИКИ ДЛЯ ФОРМА ОТЧЕТА: КАБИНЕТ 007
 
 
-class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
+class CaseCabinetBugBonus(DataParserOneFileCabinet):
     """Обработчик данных для кейса: кабинет 007, бонус за мешок"""
 
-    def __init__(self, file, bonus_count: int, sales_units) -> None:
+    def __init__(self, file, bonus_count: int, sales_units: str) -> None:
         super().__init__(file, bonus_count, sales_units)
         self.report_file: Workbook = openpyxl.Workbook()
         self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
@@ -205,9 +241,9 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         return False
 
     def get_bonus_sum(self, manager_data: list) -> float:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -283,18 +319,19 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
                 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
 
 
-class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
+class CaseCabinetFixedBonusPalette(CaseCabinetBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с палетты"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
         super().__init__(file, bonus_count, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> int:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -310,18 +347,19 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
             return self.bonus_count
 
 
-class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
+class CaseCabinetFixedBonusBugs(CaseCabinetBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с мешка"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
         super().__init__(file, bonus_count, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -336,18 +374,19 @@ class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
             return self.bonus_count
 
 
-class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
+class CaseCabinetFixedBonusTons(CaseCabinetBugBonus):
     """Обработчик данных для кейса: кабинет 007, фиксированный бонус с тонны"""
 
-    def __init__(self, file, bonus_count: int, product_count_input: int, action_checkbox: bool, sales_units) -> None:
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
         super().__init__(file, bonus_count, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight
@@ -365,10 +404,10 @@ class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
 # ОБРАБОТЧИКИ ДЛЯ ФОРМА ОТЧЕТА: ОТЧЕТ С МЕНЕДЖЕРАМИ
 
 
-class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
+class CaseManagersBugBonus(DataParserTwoFileCabinet):
     """Обработчик данных для кейса: отчет с менеджерами, бонус за мешок"""
 
-    def __init__(self, file1, file2, bonus_count, distributor_name_input, sales_units):
+    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str, sales_units: str) -> None:
         super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
         self.report_file: Workbook = openpyxl.Workbook()
         self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
@@ -446,9 +485,9 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         self.work_report[f'F{iteration}'] = calculation['bonus_sum']
 
     def get_calculations_for_manager_data(self, manager_data: list) -> dict:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[1])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -461,9 +500,9 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
                 'bags_count': bags_count, 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
 
     def get_bonus_sum(self, manager_data: list) -> float:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[1])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -474,19 +513,19 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         return bonus_sum
 
 
-class CaseManagersTonsFixedBonusPalette(CaseManagersTonsBugBonus):
+class CaseManagersFixedBonusPalette(CaseManagersBugBonus):
     """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с палетты"""
 
-    def __init__(self, file1, file2, bonus_count, distributor_name_input,
-                 sales_units, product_count_input, action_checkbox):
+    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str,
+                 sales_units: str, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> int:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -502,19 +541,19 @@ class CaseManagersTonsFixedBonusPalette(CaseManagersTonsBugBonus):
             return self.bonus_count
 
 
-class CaseManagersTonsFixedBonusBugs(CaseManagersTonsBugBonus):
+class CaseManagersFixedBonusBugs(CaseManagersBugBonus):
     """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с мешка"""
 
-    def __init__(self, file1, file2, bonus_count, distributor_name_input,
-                 sales_units, product_count_input, action_checkbox):
+    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str,
+                 sales_units: str, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -529,19 +568,19 @@ class CaseManagersTonsFixedBonusBugs(CaseManagersTonsBugBonus):
             return self.bonus_count
 
 
-class CaseManagersTonsFixedBonusTons(CaseManagersTonsBugBonus):
+class CaseManagersFixedBonusTons(CaseManagersBugBonus):
     """Обработчик данных для кейса: отчет с менеджерами, фиксированный бонус с тонны"""
 
-    def __init__(self, file1, file2, bonus_count, distributor_name_input,
-                 sales_units, product_count_input, action_checkbox):
+    def __init__(self, file1, file2, bonus_count: int, distributor_name_input: str,
+                 sales_units: str, product_count_input: int, action_checkbox: bool) -> None:
         super().__init__(file1, file2, bonus_count, distributor_name_input, sales_units)
-        self.product_count_input = product_count_input
-        self.action = action_checkbox
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
 
     def get_bonus_sum(self, manager_data: list) -> Union[int, float]:
-        nomenclature = manager_data[0]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight
@@ -554,3 +593,13 @@ class CaseManagersTonsFixedBonusTons(CaseManagersTonsBugBonus):
             return bags_count // self.product_count_input * self.bonus_count
         else:
             return self.bonus_count
+
+
+# ОБРАБОТЧИКИ ДЛЯ ФОРМА ОТЧЕТА: ОТЧЕТ С МЕНЕДЖЕРАМИ
+
+
+class CaseNotManagersBugBonus(DataParserOneFileNotManagerCabinet):
+    """Обработчик данных для кейса: отчет без менеджеров, бонус за мешок"""
+
+    def __init__(self, file, bonus_count: int, sales_units: str) -> None:
+        super().__init__(file, bonus_count, sales_units)
