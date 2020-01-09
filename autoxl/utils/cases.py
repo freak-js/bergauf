@@ -208,10 +208,12 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
 
@@ -268,10 +270,12 @@ class CaseCabinetTonsBugBonus(DataParserOneFileCabinet):
         nomenclature_code = manager_data[1]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         bonus_count = self.bonus_count
         bonus_sum = self.get_bonus_sum(manager_data)
         return {'nomenclature': nomenclature, 'nomenclature_code': nomenclature_code,
@@ -291,10 +295,12 @@ class CaseCabinetTonsFixedBonusPalette(CaseCabinetTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
         if palette_count < self.product_count_input:
             return 0
@@ -316,10 +322,12 @@ class CaseCabinetTonsFixedBonusBugs(CaseCabinetTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         if bags_count < self.product_count_input:
             return 0
         if self.action:
@@ -340,10 +348,12 @@ class CaseCabinetTonsFixedBonusTons(CaseCabinetTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight
         else:
             bags_count = weight * product_mass
+
         if bags_count < self.product_count_input:
             return 0
         if self.action:
@@ -439,10 +449,12 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         nomenclature = manager_data[0]
         weight = float(manager_data[1])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         bonus_count = self.bonus_count
         bonus_sum = self.get_bonus_sum(manager_data)
         return {'nomenclature': nomenclature, 'weight': weight, 'product_mass': product_mass,
@@ -452,10 +464,12 @@ class CaseManagersTonsBugBonus(DataParserTwoFileCabinet):
         nomenclature = manager_data[0]
         weight = float(manager_data[1])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         bonus_sum = bags_count * self.bonus_count
         return bonus_sum
 
@@ -473,10 +487,12 @@ class CaseManagersTonsFixedBonusPalette(CaseManagersTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
         if palette_count < self.product_count_input:
             return 0
@@ -499,10 +515,12 @@ class CaseManagersTonsFixedBonusBugs(CaseManagersTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
         else:
             bags_count = weight
+
         if bags_count < self.product_count_input:
             return 0
         if self.action:
@@ -524,10 +542,12 @@ class CaseManagersTonsFixedBonusTons(CaseManagersTonsBugBonus):
         nomenclature = manager_data[0]
         weight = float(manager_data[2])
         product_mass = utilits.get_product_mass(nomenclature)
+
         if self.sales_units == 'tons':
             bags_count = weight
         else:
             bags_count = weight * product_mass
+
         if bags_count < self.product_count_input:
             return 0
         if self.action:
