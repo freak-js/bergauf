@@ -5,7 +5,8 @@ import re
 from . import constants
 from .cases import (CaseCabinetBugBonus, CaseCabinetFixedBonusPalette, CaseCabinetFixedBonusBugs,
                     CaseCabinetFixedBonusTons, CaseManagersBugBonus, CaseManagersFixedBonusPalette,
-                    CaseManagersFixedBonusBugs, CaseManagersFixedBonusTons, CaseNotManagersBugBonus)
+                    CaseManagersFixedBonusBugs, CaseManagersFixedBonusTons, CaseNotManagersBugBonus,
+                    CaseNotManagersFixedBonusPalette, CaseNotManagersFixedBonusBugs, CaseNotManagersFixedBonusTons)
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 """
@@ -180,13 +181,19 @@ def get_report_file(request: HttpResponse):
             else:  # Тип бонуса: Фиксированный бонус
 
                 if post['fixed_bonus_selectbox'] == '1':  # Фиксированный бонус с: Палетты
-                    pass
+                    product_count_input = int(post['product_count_input'])
+                    return CaseNotManagersFixedBonusPalette(file1, bonus_count, product_count_input,
+                                                            action_checkbox, sales_units)
 
                 elif post['fixed_bonus_selectbox'] == '2':  # Фиксированный бонус с: Мешка
-                    pass
+                    product_count_input = int(post['product_count_input'])
+                    return CaseNotManagersFixedBonusBugs(file1, bonus_count, product_count_input,
+                                                         action_checkbox, sales_units)
 
                 else:  # Фиксированный бонус с: Тонны
-                    pass
+                    product_count_input = int(post['product_count_input'])
+                    return CaseNotManagersFixedBonusTons(file1, bonus_count, product_count_input,
+                                                         action_checkbox, sales_units)
 
     else:  # Способ компенсации: Карты
         pass

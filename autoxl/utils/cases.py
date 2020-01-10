@@ -302,10 +302,10 @@ class CaseCabinetBugBonus(DataParserOneFileCabinet):
         self.work_report[f'G{iteration}'] = calculation['bonus_sum']
 
     def get_calculations_for_manager_data(self, manager_data: list) -> dict:
-        nomenclature = manager_data[0]
-        nomenclature_code = manager_data[1]
-        weight = float(manager_data[2])
-        product_mass = utilits.get_product_mass(nomenclature)
+        nomenclature: str = manager_data[0]
+        nomenclature_code: str = manager_data[1]
+        weight: float = float(manager_data[2])
+        product_mass: int = utilits.get_product_mass(nomenclature)
 
         if self.sales_units == 'tons':
             bags_count = weight * COUNT_KGS_IN_TON / product_mass
@@ -595,7 +595,7 @@ class CaseManagersFixedBonusTons(CaseManagersBugBonus):
             return self.bonus_count
 
 
-# ОБРАБОТЧИКИ ДЛЯ ФОРМА ОТЧЕТА: ОТЧЕТ С МЕНЕДЖЕРАМИ
+# ОБРАБОТЧИКИ ДЛЯ ФОРМА ОТЧЕТА: ОТЧЕТ БЕЗ МЕНЕДЖЕРОВ
 
 
 class CaseNotManagersBugBonus(DataParserOneFileNotManagerCabinet):
@@ -603,3 +603,154 @@ class CaseNotManagersBugBonus(DataParserOneFileNotManagerCabinet):
 
     def __init__(self, file, bonus_count: int, sales_units: str) -> None:
         super().__init__(file, bonus_count, sales_units)
+        self.report_file: Workbook = openpyxl.Workbook()
+        self.work_report: Worksheet = self.report_file.create_sheet('Рабочий отчет', 0)
+        self.cabinet007_report: Worksheet = self.report_file.create_sheet('Отчет для сдачи', 1)
+
+    def get_cabinet_report(self) -> None:
+        total_bonus_for_this_manager: int = 0
+        for data in self.data_list:
+            total_bonus_for_this_manager += self.get_bonus_sum(data)
+        self.cabinet007_report['A1'] = '00208'
+        self.cabinet007_report['B1'] = total_bonus_for_this_manager / DUMMY_BONUS_PER_TON
+
+    def get_work_report(self) -> None:
+        iteration: int = 1
+        total_bags_count, total_bonus_sum = 0, 0
+        self.set_work_report_title()
+        for data in self.data_list:
+            iteration += 1
+            calculation = self.get_calculations(data)
+            total_bags_count += calculation['bags_count']
+            total_bonus_sum += calculation['bonus_sum']
+            self.set_work_report_cell_value(iteration, calculation)
+        self.summarize(iteration, total_bags_count, total_bonus_sum)
+
+    def set_work_report_title(self) -> None:
+        self.work_report['C1'] = 'Вес единицы продукта'
+        self.work_report['D1'] = 'Количество мешков'
+        self.work_report['E1'] = 'Бонус за 1 мешок'
+        self.work_report['F1'] = 'Сумма бонуса'
+
+    def summarize(self, iteration: int, total_bags_count: int, total_bonus_sum: int) -> None:
+        self.work_report[f'A{iteration}'] = 'Итого:'
+        self.work_report[f'D{iteration}'] = total_bags_count
+        self.work_report[f'F{iteration}'] = total_bonus_sum
+
+    def get_calculations(self, data: list) -> dict:
+        nomenclature: str = data[0]
+        weight: float = float(data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
+
+        if self.sales_units == 'tons':
+            bags_count = weight * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = weight
+
+        bonus_count: int = self.bonus_count
+        bonus_sum: float = self.get_bonus_sum(data)
+        return {'nomenclature': nomenclature, 'weight': weight, 'product_mass': product_mass,
+                'bags_count': bags_count, 'bonus_count': bonus_count, 'bonus_sum': bonus_sum}
+
+    def get_bonus_sum(self, data: list) -> float:
+        nomenclature: str = data[0]
+        weight: float = float(data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
+
+        if self.sales_units == 'tons':
+            bags_count = weight * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = weight
+
+        bonus_sum = bags_count * self.bonus_count
+        return bonus_sum
+
+    def set_work_report_cell_value(self, iteration: int, calculation: dict) -> None:
+        self.work_report[f'A{iteration}'] = calculation['nomenclature']
+        self.work_report[f'B{iteration}'] = calculation['weight']
+        self.work_report[f'C{iteration}'] = calculation['product_mass']
+        self.work_report[f'D{iteration}'] = calculation['bags_count']
+        self.work_report[f'E{iteration}'] = calculation['bonus_count']
+        self.work_report[f'F{iteration}'] = calculation['bonus_sum']
+
+
+class CaseNotManagersFixedBonusPalette(CaseNotManagersBugBonus):
+    """Обработчик данных для кейса: отчет без менеджеров, фиксированный бонус с палетты"""
+
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
+        super().__init__(file, bonus_count, sales_units)
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
+
+    def get_bonus_sum(self, data: list) -> float:
+        nomenclature: str = data[0]
+        weight: float = float(data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
+
+        if self.sales_units == 'tons':
+            bags_count = weight * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = weight
+
+        palette_count = bags_count // BUGS_COUNT_IN_PALETTE[str(product_mass)]
+        if palette_count < self.product_count_input:
+            return 0
+        if self.action:
+            return palette_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+
+class CaseNotManagersFixedBonusBugs(CaseNotManagersBugBonus):
+    """Обработчик данных для кейса: отчет без менеджеров, фиксированный бонус с мешка"""
+
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
+        super().__init__(file, bonus_count, sales_units)
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
+
+    def get_bonus_sum(self, data: list) -> float:
+        nomenclature: str = data[0]
+        weight: float = float(data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
+
+        if self.sales_units == 'tons':
+            bags_count = weight * COUNT_KGS_IN_TON / product_mass
+        else:
+            bags_count = weight
+
+        if bags_count < self.product_count_input:
+            return 0
+        if self.action:
+            return bags_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
+
+
+class CaseNotManagersFixedBonusTons(CaseNotManagersBugBonus):
+    """Обработчик данных для кейса: отчет без менеджеров, фиксированный бонус с тонны"""
+
+    def __init__(self, file, bonus_count: int, product_count_input: int,
+                 action_checkbox: bool, sales_units: str) -> None:
+        super().__init__(file, bonus_count, sales_units)
+        self.product_count_input: int = product_count_input
+        self.action: bool = action_checkbox
+
+    def get_bonus_sum(self, data: list) -> float:
+        nomenclature: str = data[0]
+        weight: float = float(data[1])
+        product_mass: int = utilits.get_product_mass(nomenclature)
+
+        if self.sales_units == 'tons':
+            bags_count = weight
+        else:
+            bags_count = weight * product_mass
+
+        if bags_count < self.product_count_input:
+            return 0
+        if self.action:
+            return bags_count // self.product_count_input * self.bonus_count
+        else:
+            return self.bonus_count
